@@ -52,11 +52,11 @@
 
         $amount = $product_price*$product_cart_quantity;
 
-        $insert_product = mysqli_query($conn, "INSERT INTO `cart` (`user_id`,`product_id`,`cart_quantity`,`full_name`,`phone_number`, `delivery_address`,`amount`)
+        $insert_product = mysqli_query($conn, "INSERT INTO `cart` (`user_id`,`id`,`cart_quantity`,`full_name`,`phone_number`, `delivery_address`,`amount`)
                 VALUES('$user_id','$product_id','$product_cart_quantity','$full_name','$product_phone_number','$product_delivery_address','$amount ')") or die('query failed');
 
 
-        $update_query = mysqli_query($conn, "UPDATE `products` SET `product_quantity`='$product_quantity2' WHERE  product_id='$product_id'")or die('query failed');
+        $update_query = mysqli_query($conn, "UPDATE `products` SET `product_quantity`='$product_quantity2' WHERE  'id'='$product_id'")or die('query failed');
      
 
         header('location:order.php');
@@ -76,11 +76,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--------------slick slider link---------------------->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+    <link rel="stylesheet" type="text/css" href="main.css" />
     <title>home page</title>
+
+    <style>
+        /* General styles */
+        body {
+            margin-top: 30px;
+            font-family: Arial, sans-serif;
+        }
+
+        .section-title {
+            text-align: center;
+            padding-bottom: 30px;
+        }
+    </style>
 </head>
 <body>
-    <?php include 'header.php';?>
+    <?php include 'header.php' ;?>
     <!--------------home slider---------------------->
 
     <section class="form-container1">
@@ -117,14 +130,14 @@
                             ?>
                  ">
 
-                 <h4><?php echo $fetch_products['name']; ?></h4>
-                <h4>Price: <?php echo $fetch_products['price']; ?> Taka</h4>
+                <h4 style="font-size: 15px; font-weight: 300;color: #333;"><?php echo $fetch_products['name']; ?></h4>
+                <h4 style="font-size: 15px; font-weight: 300;color: #333;">Price: <?php echo $fetch_products['price']; ?> Taka</h4>
 
                 <input type="hidden" name="id" value="<?php echo $fetch_products['id'];?>">
                 
                 
                 <div class="icon">
-                    <a href="shop.php?view=<?php echo $fetch_products['id']; ?>" class="bi bi-eye-fill"></a>
+                    <a href="product.php?id=<?php echo $fetch_products['id']; ?>" class="bi bi-eye-fill"></a>
                     <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
                         <i class="bi bi-heart"></i> 
                     </button>
@@ -281,22 +294,9 @@
         ?> 
 
     </section>
-
-
-
-    
-
     <div class="line2"></div>
     
-
-
-    
-    <?php include 'footer.php';?>
-    <!--------------slick slider link---------------------->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-    <script type= "text/javascript" src="main.js"></script>
-
+    <?php include 'footer.php' ;?>
     
 </body>
 </html>
