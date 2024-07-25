@@ -16,6 +16,7 @@ if (isset($_POST['logout'])) {
 if (isset($_POST['add_product'])) {
 
     $product_name = mysqli_real_escape_string($conn, $_POST['name']);
+    $product_quantity = mysqli_real_escape_string($conn, $_POST['quantity']);
     $product_price = mysqli_real_escape_string($conn, $_POST['price']);
     $product_detail = mysqli_real_escape_string($conn, $_POST['detail']);
     $image = $_FILES['image']['name'];
@@ -28,8 +29,8 @@ if (isset($_POST['add_product'])) {
     if (mysqli_num_rows($select_product_name) > 0) {
         $message[] = 'product name already exist';
     } else {
-        $insert_product = mysqli_query($conn, "INSERT INTO `products` (`name` , `price` , `product_detail` , `image` )
-    VALUES ('$product_name', '$product_price', '$product_detail','$image')") or die('query failed');
+        $insert_product = mysqli_query($conn, "INSERT INTO `products` (`name` ,`product_quantity` , `price` , `product_detail` , `image` )
+    VALUES ('$product_name', '$product_quantity', '$product_price', '$product_detail','$image')") or die('query failed');
         if ($insert_product) {
             if ($image_size > 2000000) {
                 $message[] = 'image size is too large';
@@ -58,13 +59,14 @@ if (isset($_GET['delete'])) {
 if (isset($_POST['update_product'])) {
     $update_id = $_POST['update_id'];
     $update_name = $_POST['update_name'];
+    $update_quantity = $_POST['update_quantity'];
     $update_price = $_POST['update_price'];
     $update_detail = $_POST['update_detail'];
     $update_image = $_FILES['update_image']['name'];
     $update_image_tmp_name = $_FILES['update_image']['tmp_name'];
     $update_image_folder = 'img/' .$update_image;
    
-   $update_query = mysqli_query($conn, "UPDATE `products` SET `id` ='$update_id', `name` ='$update_name',
+   $update_query = mysqli_query($conn, "UPDATE `products` SET `id` ='$update_id', `name` ='$update_name', `product_quantity`='$update_quantity',
      `price` ='$update_price',`product_detail`='$update_detail' , `image` ='$update_image' WHERE id = '$update_id'") or 
      die('query failed');
     if ($update_query) {
@@ -111,6 +113,10 @@ if (isset($_POST['update_product'])) {
             <div class="input-field">
                 <label>product name</label>
                 <input type=" text" name="name" required>
+            </div>
+            <div class="input-field">
+                <label>product quantity</label>
+                <input type="number" name="quantity" min="0" required>
             </div>
             <div class="input-field">
                 <label>product price</label>
@@ -181,6 +187,7 @@ if (isset($_POST['update_product'])) {
                         <img src="img/<?php echo $fetch_edit['image']; ?> ">
                         <input type="hidden" name="update_id" value="<?php echo $fetch_edit['id']; ?> ">
                         <input type="text"  name="update_name" value="<?php echo $fetch_edit['name']; ?> ">
+                        <input type="number" name="update_quantity" min="0" value="<?php echo $fetch_edit['product_quantity']; ?>">
                         <input type="text"name="update_price" min="0" value="<?php echo $fetch_edit['price']; ?> ">
                         <textarea name="update_detail"><?php echo $fetch_edit['product_detail']; ?> </textarea>
                         <input type="file" name="update_image" accept="img/jpg, img/jpeg, img/png, img/webp">
