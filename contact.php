@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .contact .info i {
             font-size: 24px;
-            color: #007bff;
+            color: #ff98bc;
             margin-bottom: 10px;
         }
 
