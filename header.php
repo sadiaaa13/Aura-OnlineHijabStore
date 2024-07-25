@@ -26,7 +26,7 @@
             <a href="wishlist.php"><u class="bi bi-heart" id="wishlist-btn"></u></a>
             <a href="cart.php"><u class="bi bi-cart" id="cart-btn"></u></a>
             <u class="bi bi-list" id="menu-btn"></u>
-            <u class="bi bi-search" id="search-btn"></u>
+            <a href="search.php"><u class="bi bi-search" id="search-btn"></u></a>
         </div>
         <div class="user-box">
             <p>username: <span> <?php echo $_SESSION['user_name'];?></span></p>
