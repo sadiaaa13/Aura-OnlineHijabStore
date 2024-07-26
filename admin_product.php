@@ -58,16 +58,32 @@ if (isset($_GET['delete'])) {
 
 if (isset($_POST['update_product'])) {
     $update_id = $_POST['update_id'];
-    $update_name = $_POST['update_name'];
-    $update_quantity = $_POST['update_quantity'];
-    $update_price = $_POST['update_price'];
-    $update_detail = $_POST['update_detail'];
-    $update_image = $_FILES['update_image']['name'];
-    $update_image_tmp_name = $_FILES['update_image']['tmp_name'];
-    $update_image_folder = 'img/' .$update_image;
-   
-   $update_query = mysqli_query($conn, "UPDATE `products` SET `id` ='$update_id', `name` ='$update_name', `product_quantity`='$update_quantity',
-     `price` ='$update_price',`product_detail`='$update_detail' , `image` ='$update_image' WHERE id = '$update_id'") or 
+    $update_name = mysqli_real_escape_string($conn, $_POST['update_name']);
+    $update_quantity = mysqli_real_escape_string($conn, $_POST['update_quantity']);
+    $update_price = mysqli_real_escape_string($conn, $_POST['update_price']);
+    $update_detail = mysqli_real_escape_string($conn, $_POST['update_detail']);
+    
+    if (isset($_FILES['update_image']) && $_FILES['update_image']['error'] == 0) {
+        $image_name = $_FILES['update_image']['name'];
+        $image_tmp = $_FILES['update_image']['tmp_name'];
+        $image_extension = pathinfo($image_name, PATHINFO_EXTENSION);
+        $image_new_name = 'product_' . $update_id . '.' . $image_extension;
+        $image_path = 'img/' . $image_new_name;
+
+        move_uploaded_file($image_tmp, $image_path);
+    } else {
+
+        $image_query = mysqli_query($conn, "SELECT image FROM products WHERE id = '$update_id'") or die('query failed');
+        $image_fetch = mysqli_fetch_assoc($image_query);
+        $image_new_name = $image_fetch['image'];
+    }   
+   $update_query = mysqli_query($conn, "UPDATE products SET 
+        name = '$update_name',
+        product_quantity = '$update_quantity',
+        price = '$update_price',
+        product_detail = '$update_detail',
+        image = '$image_new_name'
+        WHERE id = '$update_id'") or 
      die('query failed');
     if ($update_query) {
         move_uploaded_file($update_image_tmp_name, $update_image_folder);
@@ -120,7 +136,7 @@ if (isset($_POST['update_product'])) {
             </div>
             <div class="input-field">
                 <label>product price</label>
-                <input type=" text" name="price" required>
+                <input type="number" name="price" required min="1" required>
             </div>
             <div class="input-field">
                 <label>product detail</label>
@@ -188,7 +204,7 @@ if (isset($_POST['update_product'])) {
                         <input type="hidden" name="update_id" value="<?php echo $fetch_edit['id']; ?> ">
                         <input type="text"  name="update_name" value="<?php echo $fetch_edit['name']; ?> ">
                         <input type="number" name="update_quantity" min="0" value="<?php echo $fetch_edit['product_quantity']; ?>">
-                        <input type="text"name="update_price" min="0" value="<?php echo $fetch_edit['price']; ?> ">
+                        <input type="number" name="update_price" min="1" value="<?php echo $fetch_edit['price']; ?>" step="0.01">
                         <textarea name="update_detail"><?php echo $fetch_edit['product_detail']; ?> </textarea>
                         <input type="file" name="update_image" accept="img/jpg, img/jpeg, img/png, img/webp">
                         <input type="submit" name="update_product" value="update" class="edit">
