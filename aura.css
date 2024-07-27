@@ -2,12 +2,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 :root {
     --box-shadow: 0px 0px 0px 6px rgb(255 255 255/60%);
     
-    background:linear-gradient(to top, #b99fff, #ffffff);
+    background:linear-gradient(to top, #fff, #b99fff);
 }
 
 
@@ -38,7 +39,7 @@ ul {
 }
 
 .title h1 {
-    font-size: 3rem;
+    font-size: 30px;
     text-transform: uppercase;
     margin-top: 50px;
   
@@ -54,10 +55,9 @@ ul {
 
 .line,
 .line4 {
-    background-image: url('img/5.png');
+    background:#fff;
     width: 100%;
-    height: 100px;
-    margin-top: -3.6rem;
+    height: 50px;
 }
 
 .line {
@@ -69,10 +69,9 @@ ul {
 
 .line2,
 .line3 {
-    background-image: url('img/3.png');
+    background:#fff;
     width: 100%;
-    height: 100px;
-    margin-top: -3.5rem;
+    height: 50px;
 }
 
 .line3 {
@@ -103,6 +102,7 @@ ul {
 .empty{
     text-align: center;
     align-items: center;
+    background-color: #fff;
     justify-content: center;
     padding: 1rem;
 }
@@ -210,52 +210,35 @@ input[type=submit] {
 
 /*........banner......*/
 .banner {
-    background: var(--orange);
     width: 100%;
-    height: 73vh;
-    position: reLative;
-    z-index: 1;
-    background-image:url('img/ban.png') ;
-}
-/*.....indexbanner......*/
-.indexbanner {
-    background: var(--orange);
-    width: 100%;
-    height: 73vh;
-    z-index: 1;
-    background-image:url('img/hidemo.png') ;
-   position:var(--box-shadow)
+    height: 450px;
+    position: relative;
+    background: linear-gradient(to top, #fff, #b99fff);
 }
 
-.banner::before {
-    position: absoLute;
-    content: '';
-    bottom: -18%;
-    right: 0;
-    background-image: urL('img/14.png');
-    width: 316px;
-    height: 245px;
-    background-size: 316px;
-    background-repeat: no-repeat;
+.banner img {
+    width: 30%;
+    height: auto; 
+    display: block;
+    position: absolute;
+    top: 55%;
+    left: 5%;
+    transform: translateY(-50%);
 }
 
 .banner .detail {
     position: absolute;
-    padding: 7rem 0;
-    Left: 35%;
-    text-align: center;
+    top: 50%;
+    left: 40%;
+    transform: translateY(-50%);
     z-index: 200;
 }
 
 .banner .detail h1 {
-    font-size: 4rem;
+    font-size: 48px;
     color: #b99fff;
-    text-transform: capitaLize;
-    margin-top: 140px;
-    
-  
-
-
+    font-weight: 500;
+    text-transform: capitalize;
 }
 
 .banner .detail p {
@@ -423,8 +406,7 @@ header .icons u:hover {
 .add-products{
     margin-top: -3.5rem;
     height: auto;
-    background:#c9c1e6;
-   
+    background:#b99fff;
     position: relative;
  
 }
