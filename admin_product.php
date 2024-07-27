@@ -76,7 +76,8 @@ if (isset($_POST['update_product'])) {
         $image_query = mysqli_query($conn, "SELECT image FROM products WHERE id = '$update_id'") or die('query failed');
         $image_fetch = mysqli_fetch_assoc($image_query);
         $image_new_name = $image_fetch['image'];
-    }   
+    }
+   
    $update_query = mysqli_query($conn, "UPDATE products SET 
         name = '$update_name',
         product_quantity = '$update_quantity',
@@ -125,6 +126,7 @@ if (isset($_POST['update_product'])) {
     ?>
     <div class="line2"></div>
     <section class="add-products form-container">
+        <h1 class='title' style="color: #fff; font-size: 32px; font-weight: 400;">Products Addition</h1>
         <form method="POST" action="" enctype="multipart/form-data">
             <div class="input-field">
                 <label>product name</label>
@@ -136,7 +138,7 @@ if (isset($_POST['update_product'])) {
             </div>
             <div class="input-field">
                 <label>product price</label>
-                <input type="number" name="price" required min="1" required>
+                <input type="number" name="price" required min="1" step="0.01" placeholder="Enter the price">
             </div>
             <div class="input-field">
                 <label>product detail</label>
@@ -151,7 +153,6 @@ if (isset($_POST['update_product'])) {
 
     </section>
     <div class="line3"></div>
-    <div class="line4"></div>
     <section class="show-products">
         <div class="box-container">
             <?php
@@ -188,7 +189,6 @@ if (isset($_POST['update_product'])) {
             ?>
         </div>
     </section>
-    <div class="line"></div>
     <section class="update-container">
         <?php
         if (isset($_GET['edit'])) {
