@@ -345,7 +345,6 @@ header .icons u:hover {
 .hero-caption .btn:hover {
     background-color: #ff98bc;
 }
-
 /*--------------services------------------*/
 .services{
     margin-top: 50px;
@@ -400,6 +399,7 @@ header .icons u:hover {
 }
 
 .story .row {
+    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr)); 
     grid-gap: 20px;
 }
@@ -426,10 +426,10 @@ header .icons u:hover {
 }
 
 .story .row .box img {
-    width: 300px;
+    width: 200px;
     height: 300px;
     border-radius: 20px;
-    margin-left: 800px;
+    margin-inline-end: 20px;
     margin-top: -320px;
 }
 
@@ -489,8 +489,9 @@ header .icons u:hover {
 
 .form-container1 h1 {
     margin-top: 0;
-    font-size: 2rem;
-    color: #333;
+    font-weight: 400;
+    color: #ff98bc;
+    font-size: 40px;
 }
 
 /* Box container styles */
@@ -563,7 +564,8 @@ header .icons u:hover {
 
 .price {
     position: absolute;
-    top: 5%;
+    top: 0%;
+   
     left: 5%;
     font-weight: bold;
     font-size: 1.5rem;
