@@ -34,13 +34,6 @@
 </div>
 </header>
 <div class="line"></div>
-<div class="banner">
-    <div class="detail">
-        <h1>admin dashboard</h1>
-        
-</div>
-</div>
-
 
 </body>
 </html>
