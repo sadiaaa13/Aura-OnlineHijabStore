@@ -2,13 +2,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 :root {
     --box-shadow: 0px 0px 0px 6px rgb(255 255 255/60%);
     
-    background:linear-gradient(to top, #fff, #b99fff);
+    background:linear-gradient(to top, #b99fff, #ffffff);
 }
 
 
@@ -55,7 +54,7 @@ ul {
 
 .line,
 .line4 {
-    background:#fff;
+    background:#b99fff;
     width: 100%;
     height: 50px;
 }
@@ -69,7 +68,7 @@ ul {
 
 .line2,
 .line3 {
-    background:#fff;
+    background:#b99fff;
     width: 100%;
     height: 50px;
 }
@@ -83,7 +82,7 @@ ul {
 .empty {
     text-align: center;
     text-transform: capitalize;
-    margin: 0 auto;
+    margin: 10 auto;
     margin-bottom: 2rem;
     width: 60%;
     padding: .5rem .5rem;
@@ -102,7 +101,6 @@ ul {
 .empty{
     text-align: center;
     align-items: center;
-    background-color: #fff;
     justify-content: center;
     padding: 1rem;
 }
@@ -210,35 +208,36 @@ input[type=submit] {
 
 /*........banner......*/
 .banner {
+    background:url(img/ban.png);
     width: 100%;
-    height: 450px;
-    position: relative;
-    background: linear-gradient(to top, #fff, #b99fff);
+    height: 483px;
+    position:absolute;
 }
-
-.banner img {
-    width: 30%;
-    height: auto; 
-    display: block;
-    position: absolute;
-    top: 55%;
-    left: 5%;
-    transform: translateY(-50%);
+/*.....indexbanner......*/
+.indexbanner {
+    width: 100%;
+    height: 400px;
+    z-index: 1;
 }
 
 .banner .detail {
     position: absolute;
-    top: 50%;
-    left: 40%;
-    transform: translateY(-50%);
+    padding: 7rem 0;
+    Left: 35%;
+    text-align: center;
     z-index: 200;
 }
 
 .banner .detail h1 {
-    font-size: 48px;
+    font-size: 4rem;
     color: #b99fff;
-    font-weight: 500;
-    text-transform: capitalize;
+    text-transform: capitaLize;
+    margin-top: 10px;
+   
+    
+  
+
+
 }
 
 .banner .detail p {
@@ -377,6 +376,7 @@ header .icons u:hover {
     z-index: 100;
 }
 .box-container{
+    margin-top: 450px;
     padding: 2% 8%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(15rem,1fr));
@@ -404,9 +404,10 @@ header .icons u:hover {
 
 /*.....admin product page.....*/
 .add-products{
-    margin-top: -3.5rem;
+    margin-top: 0.3 rem;
     height: auto;
-    background:#b99fff;
+    background:#c9c1e6;
+   
     position: relative;
  
 }
