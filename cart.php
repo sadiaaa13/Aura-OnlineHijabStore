@@ -62,15 +62,11 @@ if (isset($_GET['delete_all'])) {
 </head>
 
 <body>
-    <div class="banner">
-        <div class="detail">
-            <h1>Cart</h1>
-            <a href="index.php">home</a><span>/cart</span>
-        </div>
-    </div>
-    <div class="line"></div>
+<?php include 'header.php';?>
+    <div style="background: linear-gradient(to top, #ff98bc, #fff); margin-top:100px; padding:20px; margin-bottom:0px">
+        <h1 style="font-size: 40px; color: #ff98bc; font-weight:400; margin-top:50px">Products Added in Cart</h1>
+
     <section class="shop">
-        <h1 class="title">Products added in cart</h1>
         <?php
         if (isset($message)) {
             foreach ($message as $msg) {
@@ -83,7 +79,6 @@ if (isset($_GET['delete_all'])) {
         ?>
         <div class='line4'></div>
         <section class='message-container'>
-            <h1 class='title'>Total user account</h1>
             <div class='box-container'>
                 <?php
                 $grand_total = 0;
@@ -122,15 +117,17 @@ if (isset($_GET['delete_all'])) {
             <div class="dlt">
                 <a href="cart.php?delete_all" class="btn2" onclick="return confirm('Do you want to delete all items in your cart?')">Delete All</a>
             </div>
-            <div class="cart_total">
-                <p>Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
+            <div class="cart_total" style="align-self: center">
+                <p style="margin-bottom:30px;">Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
                 <a href="shop.php" class="btn">Continue Shopping</a>
                 <a href="checkout.php" class="btn <?php echo ($grand_total > 0) ? '' : 'disabled'; ?>" onclick="return confirm('Proceed to checkout?')">Proceed to Checkout</a>
             </div>
         </section>
     </section>
+    </div>
 
     <script type="text/javascript" src="script.js"></script>
+    <?php include 'footer.php' ;?>
 </body>
 
 </html>

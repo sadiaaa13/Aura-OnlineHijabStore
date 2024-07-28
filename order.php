@@ -41,20 +41,13 @@ number =$number AND message= '$message'") or die('query failed');
 </head>
 
 <body>
+<?php include 'header.php';?>
+    <div style="background: linear-gradient(to top, #ff98bc, #fff); margin-top:100px; padding:20px; margin-bottom:0px">
+        <h1 style="font-size: 40px; color: #ff98bc; font-weight:400; margin-top:50px">Orders</h1>
 
-    <div class='banner'>
-        <div class='detail'>
-            <h1>order</h1>
-        
-            <a href='index.php'>home</a><span>/order</span>
-        </div>
-    </div>
-    <div class='line'></div>
     <div class='order-section'>
         <div class='box-container'>
-
             <?php
-
             $select_orders = mysqli_query($conn, "SELECT * FROM `orders` where user_id='$user_id'")
                 or die('query failed');
             if (mysqli_num_rows($select_orders) > 0) {
@@ -116,9 +109,10 @@ number =$number AND message= '$message'") or die('query failed');
             ?>
 
         </div>
-
-        <script type='text/javascript' src='script.js'></script>
     </div>
+    </div>
+    <script type='text/javascript' src='script.js'></script>
+    <?php include 'footer.php' ;?>
 </body>
 
 </html>

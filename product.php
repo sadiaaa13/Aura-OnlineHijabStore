@@ -76,7 +76,7 @@ if (!$similar_products_query) {
         .product-image {
             margin-top: 20px;
             border-radius: 20px;
-            max-width: 100%;
+            max-width: 90%;
             height: auto;
         }
 
