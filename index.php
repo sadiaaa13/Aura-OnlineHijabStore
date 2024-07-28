@@ -113,7 +113,7 @@
     <!--------------------------------------home slider------------------------------->
     <div class="container-fluid">
           <div class="hero-section">
-               <img src="img/slider.png" alt="Hero Image">
+               <img src="img/slider.png">
                <div class="hero-caption">
                     <h1>Welcome to AURA</h1>
                     <p>Discover amazing products and enjoy exclusive offers!</p>

@@ -134,6 +134,32 @@ if (isset($_POST['search'])) {
           color: #333;
       }
 
+      .box .icon {
+          margin-top: 10px;
+      }
+
+      .box .icon a,
+      .box .icon button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 20px;
+          margin: 0 5px;
+          color: #333;
+      }
+
+      .box .icon a:hover,
+      .box .icon button:hover {
+          color: #ff98bc;
+      }
+
+      .icon a {
+        text-decoration: none; 
+        }
+
+        .icon a:hover {
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -156,9 +182,138 @@ if (isset($_POST['search'])) {
                 <h4><?php echo $product['name']; ?></h4>
                 <p>Price: <?php echo $product['price']; ?> Taka</p>
                 <p><?php echo $product['product_detail']; ?></p>
+                <div class="icon">
+                <a href="product.php?id=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-eye-fill"></a>
+                    <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
+                        <i class="bi bi-heart"></i> 
+                    </button>
+                    <a href="shop.php?cart=<?php echo $product['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
+                </div>
             </div>
         <?php endforeach; ?>
     </div>
+
+    <section class="update-container">
+
+ 
+    <?php
+        if(isset($_GET['view'])) {
+            $edit_id = $_GET['view'];
+            
+            $edit_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `product_id`='$edit_id'")or die('query failed');
+            if(mysqli_num_rows($edit_query)>0){
+                while($fetch_products = mysqli_fetch_assoc($edit_query)){
+
+                
+            //}
+    // }
+    ?>
+
+
+    <form method="POST" enctype="multipart/form-data">
+
+
+
+    <img src="img/<?php echo $fetch_products['image']; 
+                        ?>
+            ">
+
+            
+            <h4><br><?php echo $fetch_products['name']; ?></h4>
+            <h4>Price: <?php echo $fetch_products['price']; ?> Taka</h4>
+            <p>Quantity: <?php echo $fetch_products['product_quantity']; ?></p>
+            <details>
+                
+                Category: <?php echo $fetch_products['category']; ?><br>
+                Description: <?php echo $fetch_products['detail']; ?><br>
+            </details>
+
+            <input type="hidden" name="product_id" value="<?php echo $fetch_products['product_id'];?>">
+            <div class="icon2">
+            
+            <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
+                    <i class="bi bi-heart"></i> 
+                </button>
+            <a href="shop.php?cart=<?php echo $fetch_products['product_id']; ?>"class="bi bi-cart" onclick="
+                return confirm('want to cart this product');"></a>
+                <a href="shop.php?"class="bi bi-x-lg"></a>
+            </div>
+    </form>
+    <?php 
+                }
+            }
+            
+            echo "<script>document.querySelector('.update-container').style.display='block'</script>";
+            
+        }
+    ?>  
+    </section>
+
+    <section class="update-container2">
+    <?php
+
+        if(isset($_GET['cart'])) {
+            $edit_id = $_GET['cart'];
+            $edit_query =mysqli_query($conn,"SELECT * FROM  `products`
+            where product_id='$edit_id'
+            ")or die('query failed');
+            
+            if(mysqli_num_rows($edit_query)>0){
+                while($fetch_edit = mysqli_fetch_assoc($edit_query)){
+
+                
+            //}
+    // }
+    ?>
+    <form method="POST" enctype="multipart/form-data">
+    <h1>Delivery Product And Customer Information</h1><br>
+
+        <img src="img/<?php echo $fetch_edit['image'];?>">
+        
+
+        <h4><br><?php echo $fetch_edit['name']; ?></h4>
+            <h4>Price: <?php echo $fetch_edit['price']; ?> Taka</h4>
+            <p>Quantity: <?php echo $fetch_edit['product_quantity']; ?></p>
+            <details>
+                
+                Category: <?php echo $fetch_edit['category']; ?><br>
+                Description: <?php echo $fetch_edit['detail']; ?><br>
+            </details><br>
+
+            
+
+            
+            
+        <input type="hidden" name="product_id" value="<?php echo $fetch_edit['product_id'];?>">
+        <input type="hidden" name="price" value="<?php echo $fetch_edit['price'];?>">
+        <input type="hidden" name="product_quantity" value="<?php echo $fetch_edit['product_quantity'];?>">
+
+        <p style="margin-left: -76%;">Required Quantity: </p>
+        <input type="number" name="cart_quantity" min="1" max="<?php echo $fetch_edit['product_quantity']; ?>">
+        <p>------------------------Customer Information------------------------</p>
+        <p style="margin-left: -86%;">Full Name: </p>
+        <input type="text" name="full_name" value="<?php echo $user_id2;?>">
+        <p style="margin-left: -82%;">Phone Number: </p>
+        <input type="text" name="phone_number"  >
+        <p style="margin-left: -80%;">Delivery Address: </p>
+        <textarea name="delivery_address" required></textarea>
+        
+        
+        <button type="submit" name="buy_now" class="btn2"  onclick="return confirm('Want to buy this product?')">
+        <i class="bi bi-cart-fill"></i>  Buy Now
+        </button>
+        <input type="reset" value="Cancel" class="btn2"  class="btn2" id="go-back" onclick="window.history.back(); ">
+    </form>
+    <?php 
+                }
+            }
+            echo "<script>document.querySelector('.update-container2').style.display='block'</script>";
+            
+        }
+    ?> 
+
+    </section>
+
     <?php include 'footer.php'; ?>
 </body>
 </html>
