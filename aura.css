@@ -233,11 +233,6 @@ input[type=submit] {
     color: #b99fff;
     text-transform: capitaLize;
     margin-top: 10px;
-   
-    
-  
-
-
 }
 
 .banner .detail p {
@@ -406,13 +401,18 @@ header .icons u:hover {
 .add-products{
     margin-top: 0.3 rem;
     height: auto;
-    background:#c9c1e6;
+    background:url(img/download\ \(5\).jpeg);
    
     position: relative;
  
 }
 
-.show-products,
+.show-products{
+    position:relative ;
+    background: var(--orange);
+    margin-top: -400px;   
+}
+
 .message-container,
 .order-container{
     position:relative ;

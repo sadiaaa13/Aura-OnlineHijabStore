@@ -33,14 +33,12 @@ if (isset($_POST['logout'])) {
 <body>
      <?php include 'admin_header.php';
      ?>
-     <div class="banner" style="background:linear-gradient(to top, #fff, #b99fff);">
-          <img src="img/slider.png">  
-          <div class="detail">
-               <h1 style="color: #fff; font-size: 48px; font-weight: 400;">Admin Dashboard</h1>
-          </div>
-     </div>
+     <div class="banner"></div>
+     
 
-     <section class='dashboard' style=' background:linear-gradient(to bottom, #fff, #b99fff);'>
+     <section class='dashboard'>
+          <h1 class='title' style=" margin-top: 200px;color: #fff; font-size: 48px; font-weight: 400;">Admin Dashboard</h1>
+
           <div class='box-container'>
                <div class='box'>
                     <?php

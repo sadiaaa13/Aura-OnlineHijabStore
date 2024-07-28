@@ -41,6 +41,7 @@ if (isset($_GET['delete'])) {
 
 <body>
     <?php include 'admin_header.php'; ?>
+    <div class="banner"></div>
     <?php
     if (isset($message)) {
         foreach ($message as $message) {
@@ -52,7 +53,7 @@ if (isset($_GET['delete'])) {
     }
     ?>
     <section class='message-container'>
-        <h1 class='title' style="color: #fff; font-size: 32px; font-weight: 400; margin-top: 60px;">Total User Accounts</h1>
+        <h1 class='title' style="margin-top:200px;color: #fff; font-size: 32px; font-weight: 400;">Total User Accounts</h1>
         <div class='box-container'>
             <?php
             $select_users = mysqli_query($conn, "SELECT * FROM `users`") or die('query failed');

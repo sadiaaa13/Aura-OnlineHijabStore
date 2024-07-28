@@ -57,7 +57,7 @@ if (isset($_GET['delete'])) {
     }
     ?>
     <section class='message-container'>
-        <h1 class='title'>unread message</h1>
+        <h1 class='title' style="margin-top:200px;color: #fff; font-size: 32px; font-weight: 400;">Messages from User end</h1>
         <div class='box-container'>
             <?php
             $select_message = mysqli_query($conn, "SELECT * FROM `message`") or die('query failed');

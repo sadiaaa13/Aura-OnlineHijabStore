@@ -50,6 +50,7 @@ if(isset($_POST['update_order'])){
 <body>
     <?php include 'admin_header.php';
     ?>
+    <div class="banner"></div>
     <?php
     if (isset($orders)) {
         foreach ($orders as $orders) {
@@ -63,7 +64,7 @@ if(isset($_POST['update_order'])){
     }
     ?>
     <section class='order-container'>
-    <h1 class='title' style="color: #fff; font-size: 32px; font-weight: 400;">Orders Recieved</h1>
+    <h1 class='title' style="margin-top:200px;color: #fff; font-size: 32px; font-weight: 400;">Orders Recieved</h1>
         <div class='box-container'>
             <?php
             $select_orders = mysqli_query($conn, "SELECT * FROM orders") or die('query failed');
