@@ -870,12 +870,15 @@ border-radius: 50%;
     cursor: pointer;
     
     }
-    .checkout-form form{
-        width: 50vw;
-        box-shadow: var(--box-shadow2);
-        margin: 2rem auto;
-        padding: 2rem;
-        border-radius: 10px;
+    .payment-form {
+        align-content: center;
+        width: 700px;
+        border-radius: 15px;
+        background-color: rgba(249, 196, 216, 0.6);
+        width: 100%;
+        max-width: 650px;
+        padding: 20px;
+        margin: 0 auto; 
     }
     .input-field label{
         margin: .6rem 0;
