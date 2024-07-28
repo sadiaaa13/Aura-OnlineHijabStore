@@ -33,14 +33,19 @@ if (isset($_POST['logout'])) {
 <body>
      <?php include 'admin_header.php';
      ?>
+     <div class="banner" style="background:linear-gradient(to top, #fff, #b99fff);">
+          <img src="img/slider.png">  
+          <div class="detail">
+               <h1 style="color: #fff; font-size: 48px; font-weight: 400;">Admin Dashboard</h1>
+          </div>
+     </div>
 
-     <div class='line4'></div>
-     <section class='dashboard'>
+     <section class='dashboard' style=' background:linear-gradient(to bottom, #fff, #b99fff);'>
           <div class='box-container'>
                <div class='box'>
                     <?php
                     $total_pendings = 0;
-                    $select_pendings = mysqli_query($conn, "SELECT * FROM `orders` WHERE payment_status = 'pending'")
+                    $select_pendings = mysqli_query($conn, "SELECT * FROM orders WHERE payment_status = 'pending'")
                                              or die('query failed');
                     while ($fetch_pending = mysqli_fetch_assoc($select_pendings)) {
                          $total_pendings += $fetch_pending['total_price'];
@@ -54,7 +59,7 @@ if (isset($_POST['logout'])) {
                <div class='box'>
                     <?php
                     $total_completes = 0;
-                    $select_completes = mysqli_query($conn, "SELECT * FROM `orders` WHERE payment_status = 'complete'")
+                    $select_completes = mysqli_query($conn, "SELECT * FROM orders WHERE payment_status = 'complete'")
                                              or die('query failed');
                     while ($fetch_completes = mysqli_fetch_assoc($select_completes)) {
                          $total_completes += $fetch_completes['total_price'];
@@ -68,7 +73,7 @@ if (isset($_POST['logout'])) {
                <div class='box'>
                     <?php
                     
-                    $select_orders = mysqli_query($conn, "SELECT * FROM `orders` ")
+                    $select_orders = mysqli_query($conn, "SELECT * FROM orders ")
                                              or die('query failed');
                     $num_of_orders= mysqli_num_rows($select_orders);
                     ?>
@@ -79,7 +84,7 @@ if (isset($_POST['logout'])) {
                <div class='box'>
                     <?php
                     
-                    $select_products = mysqli_query($conn, "SELECT * FROM `products`")
+                    $select_products = mysqli_query($conn, "SELECT * FROM products")
                                              or die('query failed');
                     $num_of_products= mysqli_num_rows($select_products);
                     ?>
@@ -91,7 +96,7 @@ if (isset($_POST['logout'])) {
           <div class='box'>
                     <?php
                     
-                    $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE user_type ='user'")
+                    $select_users = mysqli_query($conn, "SELECT * FROM users WHERE user_type ='user'")
                                              or die('query failed');
                     $num_of_users= mysqli_num_rows($select_users);
                     ?>
@@ -103,7 +108,7 @@ if (isset($_POST['logout'])) {
           <div class='box'>
                     <?php
                     
-                    $select_admins = mysqli_query($conn, "SELECT * FROM `users` WHERE user_type ='admin'")
+                    $select_admins = mysqli_query($conn, "SELECT * FROM users WHERE user_type ='admin'")
                                              or die('query failed');
                     $num_of_admin= mysqli_num_rows($select_admins);
                     ?>
@@ -115,7 +120,7 @@ if (isset($_POST['logout'])) {
           <div class='box'>
                     <?php
                     
-                    $select_users = mysqli_query($conn, "SELECT * FROM `users` ")
+                    $select_users = mysqli_query($conn, "SELECT * FROM users ")
                                              or die('query failed');
                     $num_of_users= mysqli_num_rows($select_users);
                     ?>
@@ -127,7 +132,7 @@ if (isset($_POST['logout'])) {
           <div class='box'>
                     <?php
                     
-                    $select_message = mysqli_query($conn, "SELECT * FROM `message` ")
+                    $select_message = mysqli_query($conn, "SELECT * FROM message ")
                                              or die('query failed');
                     $num_of_message= mysqli_num_rows($select_message);
                     ?>
@@ -138,7 +143,6 @@ if (isset($_POST['logout'])) {
           </div>
           </div>
      </section>
-     <div class='' style='height: 100vh;'></div>
      <script type='text/javascript' src='script.js'></script>
 </body>
 </html>
