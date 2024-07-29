@@ -43,15 +43,11 @@ if (isset($_GET['delete_all'])) {
 </head>
 
 <body>
-    <div class='banner'>
-        <div class='detail'>
-            <h1>My Wishlist</h1>
-            <a href='index.php'>Home</a><span>/ Wishlist</span>
-        </div>
-    </div>
-    <div class='line'></div>
-    <section class='shop'>
-        <h1 class='title'>Products added in wishlist</h1>
+<?php include 'header.php';?>
+    <div style="background: linear-gradient(to top, #ff98bc, #fff); margin-top:100px; padding:20px; margin-bottom:0px">
+        <h1 style="font-size: 40px; color: #ff98bc; font-weight:400; margin-top:50px">Products Added in Wishlist</h1>
+
+    <section class="shop">
         <?php
         if (isset($message)) {
             foreach ($message as $message) {
@@ -99,13 +95,15 @@ if (isset($_GET['delete_all'])) {
         </div>
 
         <div class='wishlist_total'>
-            <p>Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
+        <p style="margin-bottom:30px;">Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
             <a href='shop.php' class='btn'>Continue Shopping</a>
             <a href="wishlist.php?delete_all" class="btn <?php echo ($grand_total) ? '' : 'disabled'; ?>" onclick="return confirm('Do you want to delete all items in your wishlist?')">Delete All</a>
         </div>
     </section>
-
+   </div>
+   
     <script type='text/javascript' src='script.js'></script>
+    <?php include 'footer.php' ;?>
 </body>
 
 </html>
