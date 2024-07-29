@@ -124,7 +124,6 @@ if (isset($_POST['update_product'])) {
         }
     }
     ?>
-    <div class="line2"></div>
     <section class="add-products form-container">
         <h1 class='title' style="margin-top: 20px; color: #fff; font-size: 32px; font-weight: 400;">Products Addition</h1>
         <form method="POST" action="" enctype="multipart/form-data">
