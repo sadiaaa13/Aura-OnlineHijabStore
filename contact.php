@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .section-title h3 span {
-            color: #ff98bc;
+            color: #8d7968;
         }
 
         /* Contact section styles */
@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             height: auto;
             width: 100%;
             padding: 60px 0;
-            background: linear-gradient(to top, #ff98bc, #fff);
+            background: linear-gradient(to top, #8d7968, #bab8b1);
         }
 
         .contact .info {
@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             height: 200px;
             width: 400px;
             padding: 20px;
-            background: #fff;
+            background: #bab8b1;
             border-radius: 10px;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
         }
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .contact .info i {
             font-size: 24px;
-            color: #ff98bc;
+            color: #8d7968;
             margin-bottom: 10px;
         }
 
@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             align-items: center;
             height: fit-content;
             border-radius: 10px;
-            background: #fff;
+            background: #bab8b1;
         }
 
         .contact .php-email-form .form-group {
@@ -119,16 +119,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .contact .php-email-form button[type="submit"] {
-            background: #fff;
+            background: #bab8b1;
             width: 360px;
             border: 1;
             padding: 10px 24px;
-            color: #ff98bc;
+            color: #8d7968;
             transition: 0.4s;
         }
 
         .contact .php-email-form button[type="submit"]:hover {
-            background: #ff98bc;
+            background: #8d7968;
             color: white;
         }
 

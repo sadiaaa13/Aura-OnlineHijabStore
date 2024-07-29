@@ -10,10 +10,9 @@
 <body>
     <header class="header">
         <div class="flex">
-            <a href="admin_pannel.php" class="logo">
-                <img src="img/userlogo2.png">
-                <h1 style="font-family: Georgia, serif; font-size: 42px">Aura</h1>
-            </a>
+        <a href="index.php" class="logo">
+            <h1 style="font-family: Garamond, serif">Aura</h1>
+        </a>
             <nav class="navbar">
                 <a href="index.php">home</a>
                 <a href="about.php">about us</a>
@@ -26,7 +25,7 @@
             <a href="wishlist.php"><u class="bi bi-heart" id="wishlist-btn"></u></a>
             <a href="cart.php"><u class="bi bi-cart" id="cart-btn"></u></a>
             <u class="bi bi-list" id="menu-btn"></u>
-            <u class="bi bi-search" id="search-btn"></u>
+            <a href="search.php"><u class="bi bi-search" id="search-btn"></u></a>
         </div>
         <div class="user-box">
             <p>username: <span> <?php echo $_SESSION['user_name'];?></span></p>

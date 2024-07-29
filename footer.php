@@ -49,7 +49,6 @@
                     <p>Sign up for the latest Ice offers and exclusives</p>
                     <div class="input-field">
                         <input type="text" name="" placeholder="email address...">
-                        <i class="far fa-envelope"></i>
                     </div>
                     <div class="social-links">
                         <i class="fab fa-instagram"></i>

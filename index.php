@@ -79,12 +79,17 @@
 
     <style>
           .scrollable{
-               margin-top: 100px;
-               margin-left: 100px;
-               margin-left: 10px;
+               height:500px;
+               margin-top: -5px;
+               background-color: #bab8b1;
+          }
+          .line{
+               height:100px;
+               background-color: #bab8b1;
           }
         .scrollable-images {
-          margin-left: 100px;
+          margin-top: 20px;
+            margin-left: 100px;
             width: 100%;
             overflow-x: auto;
             white-space: nowrap;
@@ -122,7 +127,8 @@
      </div>
      
      <div class="scrollable">
-          <span style="font-size: 40px; color: #ff98bc; margin-left:100px; margin-top:50px">Explore Products</span>
+          <div class="line"></div>
+          <h1 style="font-size: 40px; color: #8d7968; margin-left:100px;">Explore Products</h1>
           <div class="scrollable-images">
             <?php
             // Database connection
@@ -161,7 +167,7 @@
     </div>
 
      <div class="services">
-               <span style="font-size: 40px; color: #ff98bc; margin-left:100px; margin-top:50px">Services</span>
+               <span style="font-size: 40px; color: #8d7968; margin-left:100px; margin-top:50px">Services</span>
                <div class="row">
                     <div class="box">
                          <img src="img/0.png">
@@ -189,7 +195,7 @@
           <div class="story">
                <div class="row align-items-center clearfix" style=" margin-left: -40px; margin-right: -20px;">
                     <div class="box col-md-8" >     
-                         <span style="color: #fff">Our Story</span>
+                         <span style="color: #bab8b1">Our Story</span>
                          <h1>Beginning of this Journey</h1>
                          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                          <a href="shop.php" class="btn">shop now</a>
@@ -201,7 +207,7 @@
           </div>
           <div class="discover">
                <div class="detail">
-                    <h1 class="title" style="color:#ff98bc; font: size 40px; font-weight:400">Light Weight & Comfortable Hijab</h1> <span>Buy 3 And Get 30% Off!</span>
+                    <h1 class="title" style="color:#8d7968; font: size 40px; font-weight:400">Light Weight & Comfortable Hijab</h1> <span>Buy 3 And Get 30% Off!</span>
                     <p>lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's
                     Standard Dummy Text Ever Since The 1500s, when An Unknown Printer Took A Galley of Type And Scrambled It To Make A Type Specimen Book.</p>
                     <a href="shop.php" class="btn">Discover Offer</a>

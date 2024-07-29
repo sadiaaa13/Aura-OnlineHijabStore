@@ -2,6 +2,14 @@
 include 'connection.php';
 session_start();
 
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    die('Error: User is not logged in.');
+}
+
+// Get the user ID from the session
+$user_id = $_SESSION['user_id'];
+
 // Check if product ID is set in the URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die('Error: Product ID is not specified. Please ensure the URL contains the "id" parameter.');
@@ -23,6 +31,36 @@ if (mysqli_num_rows($product_query) == 0) {
 }
 
 $product = mysqli_fetch_assoc($product_query);
+
+// Handle adding the product to the cart
+if (isset($_GET['cart'])) {
+    $cart_product_id = $_GET['cart']; // This is the product ID from the URL
+
+    // Check if the product is already in the cart
+    $check_cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid` = '$cart_product_id' AND `user_id` = '$user_id'");
+
+    if (mysqli_num_rows($check_cart_query) > 0) {
+        $message[] = 'Product already added to cart';
+    } else {
+        // Fetch product details to add to cart
+        $cart_product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id` = '$cart_product_id'");
+        $cart_product = mysqli_fetch_assoc($cart_product_query);
+
+        $product_name = $cart_product['name'];
+        $product_price = $cart_product['price'];
+        $product_image = $cart_product['image'];
+        $product_quantity = 1; // Default quantity to add to cart
+
+        // Add product to cart
+        $add_to_cart_query = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$cart_product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
+
+        if ($add_to_cart_query) {
+            $message[] = 'Product added to cart';
+        } else {
+            die('Failed to add product to cart: ' . mysqli_error($conn));
+        }
+    }
+}
 
 // Fetch similar products based on product detail keywords
 $product_keywords = explode(' ', $product['product_detail']);
@@ -47,10 +85,10 @@ if (!$similar_products_query) {
     <link rel="stylesheet" href="main.css">
     <title>Product Page</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        .Product{
+            height:max-content
             margin: 0;
-            padding: 0;
+            padding: 30px;
         }
 
         .container {
@@ -59,7 +97,7 @@ if (!$similar_products_query) {
             margin: 100px auto 40px;
             padding: 20px;
             border-radius: 40px;
-            background-color: #fff;
+            background-color: #fffffe;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -70,7 +108,7 @@ if (!$similar_products_query) {
             border-bottom: 1px solid #ddd;
             border-radius: 20px;
             padding-bottom: 20px;
-            background-color: rgba(247, 182, 205, 0.2);
+            background-color: rgb(141,121,104, 0.5);
         }
 
         .product-image {
@@ -89,7 +127,7 @@ if (!$similar_products_query) {
         .product-price {
             font-size: 20px;
             font-weight: 550;
-            color: #ff98bc;
+            color: #8d7968;
             margin: 10px 0;
         }
 
@@ -100,7 +138,7 @@ if (!$similar_products_query) {
         }
 
         .similar-products {
-            background-color: #fff;
+            background-color: #bab8b1;
             border-radius: 20px;
         }
 
@@ -126,7 +164,7 @@ if (!$similar_products_query) {
         .similar-product img {
             max-width: 100px;
             height: auto;
-            border: 2px solid #ff98bc;
+            border: 2px solid #8d7968;
             border-radius: 10px;
         }
 
@@ -144,9 +182,9 @@ if (!$similar_products_query) {
             align-items: center;
             width: 190px;
             height: 90px;
-            background: #ff98bc;
+            background: #8d7968;
             border-radius: 25px;
-            border: #ff98bc;
+            border: #8d7968;
             gap: 20px;
         }
 
@@ -159,7 +197,7 @@ if (!$similar_products_query) {
             justify-content: center;
             align-items: center;
             color: #000;
-            background: #fff;
+            background: #bab8b1;
             margin: .5rem;
             box-shadow: var(--box-shadow);
             text-decoration: none; 
@@ -232,6 +270,7 @@ if (!$similar_products_query) {
             .similar-products h2 {
                 font-size: 20px;
             }
+        }
 
             .icon {
                 width: 140px;
@@ -243,13 +282,12 @@ if (!$similar_products_query) {
                 width: 40px;
                 height: 40px;
             }
-        }
-
+        
     </style>
 </head>
 <body>
     <?php include 'header.php'; ?>
-
+    <section class="Product" style= "background: linear-gradient(to bottom, #8d7968,#bab8b1);">
     <div class="container">
         <div class="product-details">
             <img src="img/<?php echo $product['image']; ?>" alt="Product Image" class="product-image">
@@ -261,7 +299,7 @@ if (!$similar_products_query) {
                 <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
                     <i class="bi bi-heart"></i> 
                 </button>
-                <a href="shop.php?cart=<?php echo $fetch_products['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
+                <a href="product.php?id=<?php echo $product['id']; ?>&cart=<?php echo $product['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
             </div>
         </div>
         <div class="similar-products">
@@ -278,7 +316,7 @@ if (!$similar_products_query) {
             </div>
         </div>
     </div>
-
+    </section>
     <?php include 'footer.php'; ?>
 </body>
 </html>

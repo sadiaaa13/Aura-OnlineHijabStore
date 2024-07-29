@@ -49,7 +49,7 @@ if (isset($_POST['search'])) {
     <link rel="stylesheet" href="main.css">
     <title>Search</title>
     <style>
-      body {
+      .search {
         margin: 0;
         font-family: Arial, sans-serif;
       }
@@ -58,9 +58,9 @@ if (isset($_POST['search'])) {
       }
 
       .searchbar {
-          background: linear-gradient(to bottom, #ff98bc, #fff);
+          background: linear-gradient(to bottom, #8d7968, #bab8b1);
           padding: 10px 20px;
-          color: white;
+          color: #bab8b1;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -76,7 +76,7 @@ if (isset($_POST['search'])) {
       .searchbar input[type="text"] {
           padding: 10px;
           margin-right: 10px;
-          border: 1px solid #fff;
+          border: 1px solid #bab8b1;
           border-radius: 4px;
           flex: 1;
       }
@@ -91,27 +91,27 @@ if (isset($_POST['search'])) {
       }
 
       .searchbar button:hover {
-          background-color: #ff98bc;
+          background-color: #8d7968;
       }
 
 
       .message {
-          color: #ff98bc ;
+          color: #8d7968 ;
           text-align: center;
           padding: 10px;
       }
 
       .box-container {
-          background: linear-gradient(to top, #ff98bc, #fff);;
+          background: linear-gradient(to top, #8d7968, #bab8b1);;
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
           padding: 20px;
-          margin-top: 20px;
+          margin-top:;
       }
 
       .box {
-        background: #fff;
+        background: #bab8b1;
         box-shadow: var(--box-shadow2);
         width: 300px;
         padding: 2rem;
@@ -150,7 +150,7 @@ if (isset($_POST['search'])) {
 
       .box .icon a:hover,
       .box .icon button:hover {
-          color: #ff98bc;
+          color: #8d7968;
       }
 
       .icon a {
@@ -164,6 +164,7 @@ if (isset($_POST['search'])) {
 </head>
 <body>
   <?php include 'header.php'; ?>
+<section class="search">
     <div class="searchbar">
         <form method="post" action="search.php">
             <input type="text" name="search_query" placeholder="Search...">
@@ -192,8 +193,9 @@ if (isset($_POST['search'])) {
             </div>
         <?php endforeach; ?>
     </div>
+</section>
 
-    <section class="update-container">
+<section class="update-container">
 
  
     <?php

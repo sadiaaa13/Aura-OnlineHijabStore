@@ -91,9 +91,6 @@ if (isset($_POST['order_btn'])) {
 <body>
     <?php include 'header.php'; ?>
     <section class="form-container1" style="align-items: center;">
-        <div class="detail">
-            <h1>Cart</h1>
-        </div>
 
         <form method="post" class="payment-form">
             <h1 class="title">Payment Process</h1>
@@ -118,12 +115,6 @@ if (isset($_POST['order_btn'])) {
                     $total_price = ($fetch_cart['price'] * $fetch_cart['quantity']);
                     $grand_total = $total += $total_price;
                     ?>
-                    <div class="box-container">
-                        <div class="box">
-                            <img src="image/<?php echo $fetch_cart['image']; ?>">
-                            <span><?= $fetch_cart['name']; ?>(<?= $fetch_cart['quantity']; ?>)</span>
-                        </div>
-                    </div>
                     <?php
                 }
             }

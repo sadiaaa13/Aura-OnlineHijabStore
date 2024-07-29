@@ -32,18 +32,19 @@ number =$number AND message= '$message'") or die('query failed');
 <!DOCTYPE htmL>
 <html lang='en'>
 
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.θ'>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
-    <link rel='stylesheet' type='text/css' href='main.css'>
-    <title>admin pannel</title>
+<head>  
+  <meta charset='UTF-8'>
+     <meta name='viewport' content='width=device-width, initial-scale=1.θ'>
+     <link  rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
+     <link rel='stylesheet' type='text/css' href='main.css'>
+    <title>Orders</title>
 </head>
 
 <body>
 <?php include 'header.php';?>
-    <div style="background: linear-gradient(to top, #ff98bc, #fff); margin-top:100px; padding:20px; margin-bottom:0px">
-        <h1 style="font-size: 40px; color: #ff98bc; font-weight:400; margin-top:50px">Orders</h1>
+    <div style="background: linear-gradient(to bottom, #8d7968, #bab8b1); margin-top:-10px; padding:20px; margin-bottom:0px">
+        <h1 style="font-size: 32px; color: #3e3f3e; text-align: center; font-weight:400; margin-top:100px">Orders</h1>
 
     <div class='order-section'>
         <div class='box-container'>
