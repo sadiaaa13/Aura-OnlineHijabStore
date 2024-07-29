@@ -64,48 +64,4 @@ if (isset($_GET['delete_all'])) {
         }
         ?>
 
-        <div class='box-container'>
-            <?php
-            $grand_total = 0;
-            $select_wishlist = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `user_id`='$user_id'") or die('query failed');
-            if (mysqli_num_rows($select_wishlist) > 0) {
-                while ($fetch_wishlist = mysqli_fetch_assoc($select_wishlist)) {
-            ?>
-                    <form method="post" class="box">
-                        <img src="img/<?php echo $fetch_wishlist['image']; ?>">
-                        <div class='price'><?php echo $fetch_wishlist['price']; ?>/- </div>
-                      
-                        <div class='name'><?php echo $fetch_wishlist['name']; ?></div>
-
-                        <input type="hidden" name="product_id" value="<?php echo $fetch_wishlist['id']; ?>">
-                        <input type="hidden" name="product_name" value="<?php echo $fetch_wishlist['name']; ?>">
-                        <input type="hidden" name="product_price" value="<?php echo $fetch_wishlist['price']; ?>">
-                        <input type="hidden" name="product_image" value="<?php echo $fetch_wishlist['image']; ?>">
-
-                        <div class="icon">
-                            <a href="view_page.php?pid=<?php echo $fetch_wishlist['id']; ?>" class="bi bi-eye-fill"></a>
-                            <a href="wishlist.php?delete=<?php echo $fetch_wishlist['id']; ?>" class="bi bi-x" onclick="return confirm('Do you want to delete this product from your wishlist?')"></a>
-                            <button type="submit" name="add_to_cart" class="bi bi-cart"></button>
-                        </div>
-                    </form>
-
-            <?php
-                    $grand_total += (float)$fetch_wishlist['price'];
-                }
-            } else {
-                echo '<p class="empty">No products added yet!</p>';
-            }
-            ?>
-        </div>
-
-        <div class='wishlist_total'>
-            <p>Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
-            <a href='shop.php' class='btn'>Continue Shopping</a>
-            <a href="wishlist.php?delete_all" class="btn <?php echo ($grand_total) ? '' : 'disabled'; ?>" onclick="return confirm('Do you want to delete all items in your wishlist?')">Delete All</a>
-        </div>
-    </section>
-
-    <script type='text/javascript' src='script.js'></script>
-</body>
-
-</html>
+       
