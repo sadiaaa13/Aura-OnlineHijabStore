@@ -21,7 +21,7 @@ if (isset($_POST['add_to_cart'])) {
     if (mysqli_num_rows($check_cart) > 0) {
         $message[] = 'Product already added to cart';
     } else {
-        mysqli_query($conn, "INSERT INTO `cart`(`user_id`, `pid`, `name`, `price`, `quantity`, `image`, `cart_quantity`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image', '$product_quantity')") or die('query failed');
+        mysqli_query($conn, "INSERT INTO `cart`(`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')") or die('query failed');
         $message[] = 'Product added to cart';
     }
 }
@@ -31,7 +31,7 @@ if (isset($_POST['update_qty_btn'])) {
     $update_qty_id = $_POST['update_qty_id'];
     $update_value = $_POST['update_qty'];
 
-    mysqli_query($conn, "UPDATE `cart` SET cart_quantity='$update_value' WHERE id='$update_qty_id'") or die('query failed');
+    mysqli_query($conn, "UPDATE `cart` SET quantity='$update_value' WHERE id='$update_qty_id'") or die('query failed');
     header('location:cart.php');
 }
 
@@ -55,79 +55,196 @@ if (isset($_GET['delete_all'])) {
 
 <head>
     <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
-    <link rel='stylesheet' type='text/css' href='main.css'>
+     <meta name='viewport' content='width=device-width, initial-scale=1.θ'>
+     <link  rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
+     <link rel='stylesheet' type='text/css' href='main.css'>
     <title>Cart</title>
+    <style>
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 100px auto 40px;
+            padding: 20px;
+            border-radius: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .box-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #bab8b1;
+            box-shadow: var(--box-shadow2);
+            padding: 2rem;
+            margin: 1rem;
+            line-height: 2;
+            text-transform: uppercase; 
+            position: relative;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .box-container .card img{
+            width: 100%;
+            height: 250px;
+        }
+
+        .box-container .card .icon{
+            display: flex;
+            padding: 0;
+            justify-content: center; 
+            align-items: center;
+            background: #8d7968;
+            border-radius: 25px;
+            gap: 10px;
+            margin: 1rem;
+        }
+
+        .box-container .card .icon button,
+        .box-container .card .icon a{
+            padding: .8rem 2.5em;
+            text-transform: uppercase;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            background: #bab8b1;
+            margin: .5rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .box-container.card .button:hover {
+            background: #545c54;
+            color: #bab8b1;
+            text-decoration: none;
+        }
+
+        .button {
+            padding: .8rem 2.5em;
+            text-transform: uppercase;
+            background: #8d7968;
+            color: #bab8b1;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .button:hover{
+            text-decoration: none;
+        }
+        .icon a:hover {
+            text-decoration: none;
+        }
+
+        .dlt, .cart_total, .pay {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+    </style>
 </head>
 
 <body>
-<?php include 'header.php';?>
-    <div style="background: linear-gradient(to top, #ff98bc, #fff); margin-top:100px; padding:20px; margin-bottom:0px">
-        <h1 style="font-size: 40px; color: #ff98bc; font-weight:400; margin-top:50px">Products Added in Cart</h1>
+    <?php include 'header.php'; ?>
+    <div style="background: linear-gradient(to bottom, #8d7968, #bab8b1); margin-top:-20px; padding:20px;">
+        <h1 style="font-size: 32px; color:#3e3f3e; font-weight:400; text-align:center; margin-top:100px">Products Added in Cart</h1>
 
-    <section class="shop">
-        <?php
-        if (isset($message)) {
-            foreach ($message as $msg) {
-                echo '<div class="message">
-                    <span>' . $msg . '</span>
-                    <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
-                </div>';
-            }
-        }
-        ?>
-        <div class='line4'></div>
-        <section class='message-container'>
-            <div class='box-container'>
-                <?php
-                $grand_total = 0;
-                $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id'") or die('query failed');
-                if (mysqli_num_rows($select_cart) > 0) {
-                    while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
-                        $total_amt = $fetch_cart['price'] * $fetch_cart['cart_quantity'];
-                        $grand_total += $total_amt;
-                ?>
-                        <div class="box">
-                            <div class="icon">
-                                <a href="view_page.php?pid=<?php echo $fetch_cart['pid']; ?>" class="bi bi-eye-fill"></a>
-                                <a href="cart.php?delete=<?php echo $fetch_cart['id']; ?>" class="bi bi-x" onclick="return confirm('Do you want to delete this product from your cart?')"></a>
-                            </div>
-                            <img src="img/<?php echo $fetch_cart['image']; ?>">
-                            <div class="price"><?php echo $fetch_cart['price']; ?>/-</div>
-                            <div class="name"><?php echo $fetch_cart['name']; ?></div>
-                            <form method="post">
-                                <input type="hidden" name="update_qty_id" value="<?php echo $fetch_cart['id']; ?>">
-                                <div class="qty">
-                                    <input type="number" min="1" name="update_qty" value="<?php echo $fetch_cart['cart_quantity']; ?>">
-                                    <input type="submit" name="update_qty_btn" value="update">
-                                </div>
-                            </form>
-                            <div class="total-amt">
-                                Total Amount: <span><?php echo $total_amt; ?>/-</span>
-                            </div>
-                        </div>
-                <?php
-                    }
-                } else {
-                    echo '<p class="empty">No products added yet!</p>';
+        <section class="shop">
+            <?php
+            if (isset($message)) {
+                foreach ($message as $msg) {
+                    echo '<div class="message">
+                        <span>' . $msg . '</span>
+                        <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
+                    </div>';
                 }
-                ?>
-            </div>
-            <div class="dlt">
-                <a href="cart.php?delete_all" class="btn2" onclick="return confirm('Do you want to delete all items in your cart?')">Delete All</a>
-            </div>
-            <div class="cart_total" style="align-self: center">
-                <p style="margin-bottom:30px;">Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
-                <a href="shop.php" class="btn">Continue Shopping</a>
-                <a href="checkout.php" class="btn <?php echo ($grand_total > 0) ? '' : 'disabled'; ?>" onclick="return confirm('Proceed to checkout?')">Proceed to Checkout</a>
-            </div>
+            }
+            ?>
+            <section class='message-container'>
+                <div class='box-container'>
+                    <?php
+                    $grand_total = 0;
+                    $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id'") or die('query failed');
+                    if (mysqli_num_rows($select_cart) > 0) {
+                        while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
+                            $total_amt = $fetch_cart['price'] * $fetch_cart['quantity'];
+                            $grand_total += $total_amt;
+                    ?>
+                            <div class="card">                           
+                                <img style="margin-top:20px;" src="img/<?php echo $fetch_cart['image']; ?>">
+                                <div class="price" style="margin-left: 100px; color:#3e3f3e;"><?php echo $fetch_cart['price']; ?>/-</div>
+                                <div class="name"><?php echo $fetch_cart['name']; ?></div>
+                                <form method="post">
+                                    <input type="hidden" name="update_qty_id" value="<?php echo $fetch_cart['id']; ?>">
+                                    <div class="qty">
+                                        <input type="number" min="1" name="update_qty" value="<?php echo $fetch_cart['quantity']; ?>">
+                                        <input class="button" style="align-content: center;" type="submit"  name="update_qty_btn" value="update">
+                                    </div>
+                                </form>
+                                <div class="total-amt">
+                                    Total <span><?php echo $total_amt; ?>/-</span>
+                                </div>
+                                <div class="icon">
+                                    <a href="product.php?id=<?php echo $fetch_cart['pid']; ?>" class="bi bi-eye-fill"></a>
+                                    <a href="cart.php?delete=<?php echo $fetch_cart['id']; ?>" class="bi bi-x" onclick="return confirm('Do you want to delete this product from your cart?')"></a>
+                                </div>
+                            </div>
+                    <?php
+                        }
+                    } else {
+                        echo '<p class="empty">No products added yet!</p>';
+                    }
+                    ?>
+                </div>
+                <div class="dlt">
+                    <a href="cart.php?delete_all" class="button" onclick="return confirm('Do you want to delete all items in your cart?')">Delete All</a>
+                </div>
+                <div class="cart_total">
+                    <p style="margin-top:20px; margin-bottom:30px; text-align: center; font-size: 24px;">Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
+                </div>
+                <div class="pay" style="gap: 40px">
+                    <a href="shop.php" class="button">Continue Shopping</a>
+                    <a href="checkout.php" class="button <?php echo ($grand_total > 0) ? '' : 'disabled'; ?>" onclick="return confirm('Proceed to checkout?')">Proceed to Checkout</a>
+                </div>
+            </section>
         </section>
-    </section>
     </div>
 
     <script type="text/javascript" src="script.js"></script>
-    <?php include 'footer.php' ;?>
+    <?php include 'footer.php'; ?>
 </body>
 
 </html>
