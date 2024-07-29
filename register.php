@@ -45,7 +45,18 @@ if (mysqli_num_rows($select_user)> 0) {
 
     <section class="form-container">
 
-        
+        <?php
+        if(isset($message)) {
+            foreach ($message as $message){
+                echo 
+                
+                '<div class="message">
+                <span>'.$message.'</span>
+                <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
+                </div> ';
+            }
+        }
+        ?>
         <form method="post">
             <h1>register now</h1>
             <input type="text" name="name" placeholder="enter your name" required>
