@@ -389,7 +389,7 @@ header .icons u:hover {
     text-align: center;
     border-radius: 5px;
     margin: 1rem;
-    max-width: 80%;
+    max-width: 100%;
     margin-bottom: 0;
 }
 .dashboard h3{
