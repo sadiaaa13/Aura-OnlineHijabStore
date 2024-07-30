@@ -33,12 +33,13 @@ if (isset($_POST['logout'])) {
 <body>
      <?php include 'admin_header.php';
      ?>
-     <div class="banner"></div>
-     
-
+     <div class="banner">
+        <div class="detail">
+            
+        </div>
+    </div>
+     <div class='line4'></div>
      <section class='dashboard'>
-          <h1 class='title' style=" margin-top: 200px;color: #fff; font-size: 48px; font-weight: 400;">Admin Dashboard</h1>
-
           <div class='box-container'>
                <div class='box'>
                     <?php
