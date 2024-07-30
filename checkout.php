@@ -157,10 +157,7 @@ if (isset($_POST['order_btn'])) {
                 <label>city</label>
                 <input type="text" name="city" placeholder="e.g Dhaka">
             </div>
-            <div class="input-field">
-                <label>state</label>
-                <input type="text" name="state" placeholder="e.g Dhaka">
-            </div>
+         
             <div class="input-field">
                 <label>country</label>
                 <input type="text" name="country" placeholder="e.g Bangladesh">
