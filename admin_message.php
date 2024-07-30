@@ -59,7 +59,7 @@ if (isset($_GET['delete'])) {
     ?>
     <div class='line4'></div>
     <section class='message-container'>
-    <h1 class='title' style="color: #fff; font-size: 32px; font-weight: 400;">Unread Messages</h1>
+    <h1 class='title' style="color: #b99fff; font-size: 32px; font-weight: 400;">.</h1>
         <div class='box-container'>
             
             <?php
