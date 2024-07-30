@@ -1,66 +1,71 @@
 <?php
 include 'connection.php';
 session_start();
-
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    die('Error: User is not logged in.');
-}
-
-// Get the user ID from the session
 $user_id = $_SESSION['user_id'];
+$user_name = $_SESSION['user_name'];
 
-// Check if product ID is set in the URL
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die('Error: Product ID is not specified. Please ensure the URL contains the "id" parameter.');
+if (!isset($user_name)) {
+    header('location:login.php');
 }
 
-// Fetch the product ID from the URL
+if (isset($_POST['wishlist_submit'])) {
+    $product_id = $_POST['id'];
+    $product_image = $_POST['image'];
+    $product_name = $_POST['name'];
+    $product_price = $_POST['price'];
+
+    $wishlist_number = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `id`='$product_id' AND `user_id`='$user_id'") or die('query failed');
+
+    if (mysqli_num_rows($wishlist_number) > 0) {
+        $message[] = 'Product already exists in wishlist';
+    } else {
+        mysqli_query($conn, "INSERT INTO `wishlist` (`user_id`, `id`, `image`, `name`, `price`) VALUES ('$user_id', '$product_id', '$product_image', '$product_name', '$product_price')") or die('query failed1');
+        $message[] = 'Product successfully added to your wishlist';
+    }
+}
+
+if (isset($_GET['cart'])) {
+    $product_id = $_GET['cart'];
+
+    // Fetch product details from the database
+    $product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id`='$product_id'");
+    if (!$product_query) {
+        die('Query Failed: ' . mysqli_error($conn));
+    }
+
+    if (mysqli_num_rows($product_query) > 0) {
+        $product = mysqli_fetch_assoc($product_query);
+        $product_image = $product['image'];
+        $product_name = $product['name'];
+        $product_price = $product['price'];
+        $product_quantity = 1;
+
+        $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'");
+        if (!$check_cart) {
+            die('Query Failed: ' . mysqli_error($conn));
+        }
+
+        if (mysqli_num_rows($check_cart) > 0) {
+            $message[] = 'Product already added to cart';
+        } else {
+            $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
+            if (!$insert_cart) {
+                die('Query Failed: ' . mysqli_error($conn));
+            }
+            $message[] = 'Product added to cart';
+        }
+    } else {
+        $message[] = 'Product not found';
+    }
+}
+
 $product_id = $_GET['id'];
-echo "Product ID received: " . htmlspecialchars($product_id) . "<br>";
-
-// Fetch product details from the database
-$product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id` = '$product_id'");
-
+$product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id`='$product_id'");
 if (!$product_query) {
-    die('Product Query failed: ' . mysqli_error($conn));
-}
-
-if (mysqli_num_rows($product_query) == 0) {
-    die('Error: Product not found.');
+    die('Query Failed: ' . mysqli_error($conn));
 }
 
 $product = mysqli_fetch_assoc($product_query);
-
-// Handle adding the product to the cart
-if (isset($_GET['cart'])) {
-    $cart_product_id = $_GET['cart']; // This is the product ID from the URL
-
-    // Check if the product is already in the cart
-    $check_cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid` = '$cart_product_id' AND `user_id` = '$user_id'");
-
-    if (mysqli_num_rows($check_cart_query) > 0) {
-        $message[] = 'Product already added to cart';
-    } else {
-        // Fetch product details to add to cart
-        $cart_product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id` = '$cart_product_id'");
-        $cart_product = mysqli_fetch_assoc($cart_product_query);
-
-        $product_name = $cart_product['name'];
-        $product_price = $cart_product['price'];
-        $product_image = $cart_product['image'];
-        $product_quantity = 1; // Default quantity to add to cart
-
-        // Add product to cart
-        $add_to_cart_query = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$cart_product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
-
-        if ($add_to_cart_query) {
-            $message[] = 'Product added to cart';
-        } else {
-            die('Failed to add product to cart: ' . mysqli_error($conn));
-        }
-    }
-}
 
 // Fetch similar products based on product detail keywords
 $product_keywords = explode(' ', $product['product_detail']);
@@ -78,23 +83,17 @@ if (!$similar_products_query) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="main.css">
-    <title>Product Page</title>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
+    <link rel='stylesheet' type='text/css' href='main.css'>
+    <title>Product Details</title>
     <style>
-        .Product{
-            height:max-content
-            margin: 0;
-            padding: 30px;
-        }
-
         .container {
             width: 100%;
             max-width: 600px;
-            margin: 100px auto 40px;
+            margin: 80px auto 40px;
             padding: 20px;
             border-radius: 40px;
             background-color: #fffffe;
@@ -111,7 +110,7 @@ if (!$similar_products_query) {
             background-color: rgb(141,121,104, 0.5);
         }
 
-        .product-image {
+        .product-details img {
             margin-top: 20px;
             border-radius: 20px;
             max-width: 90%;
@@ -287,36 +286,60 @@ if (!$similar_products_query) {
 </head>
 <body>
     <?php include 'header.php'; ?>
-    <section class="Product" style= "background: linear-gradient(to bottom, #8d7968,#bab8b1);">
-    <div class="container">
-        <div class="product-details">
-            <img src="img/<?php echo $product['image']; ?>" alt="Product Image" class="product-image">
-            <h1 class="product-name"><?php echo $product['name']; ?></h1>
-            <p class="product-price"><?php echo $product['price']; ?> Taka</p>
-            <p class="product-availability">Availability: <?php echo ($product['product_quantity'] > 0) ? 'In Stock' : 'Out of Stock'; ?></p>
-            <p class="product-detail"><?php echo $product['product_detail']; ?></p>
-            <div class="icon">
-                <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
-                    <i class="bi bi-heart"></i> 
-                </button>
-                <a href="product.php?id=<?php echo $product['id']; ?>&cart=<?php echo $product['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
+
+    <section class="form-container1" style="background: linear-gradient(to bottom, #8d7968,#bab8b1); padding:20px; margin-top:-20px;">
+        <h1 style="color: #3e3f3e; font-size: 32px; margin-top:100px;">Product Details</h1>
+        <?php
+        if (isset($message)) {
+            foreach ($message as $msg) {
+                echo '
+                    <div class="message">
+                        <span>' . $msg . '</span>
+                        <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
+                    </div>
+                ';
+            }
+        }
+        ?>
+        <div class="container">
+            <div class="product-details">
+                <form method="post" action="product.php?id=<?php echo $product['id']; ?>">
+                    <img src="img/<?php echo $product['image']; ?>">
+                    <h4 style="font-size: 15px; font-weight: 300; color: #333;"><?php echo $product['name']; ?></h4>
+                    <h4 style="font-size: 15px; font-weight: 300; color: #333;">Price: <?php echo $product['price']; ?> Taka</h4>
+
+                    <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
+                    <input type="hidden" name="image" value="<?php echo $product['image']; ?>">
+                    <input type="hidden" name="name" value="<?php echo $product['name']; ?>">
+                    <input type="hidden" name="price" value="<?php echo $product['price']; ?>">
+                    <p class="product-availability">Availability: <?php echo ($product['product_quantity'] > 0) ? 'In Stock' : 'Out of Stock'; ?></p>
+                    <p class="product-detail"><?php echo $product['product_detail']; ?></p>
+
+                    <div class="icon">
+                        <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                        <a href="product.php?id=<?php echo $product['id']; ?>&cart=<?php echo $product['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
+                    </div>
+                </form>
             </div>
-        </div>
-        <div class="similar-products">
-            <h2>Similar Products</h2>
-            <div class="similar-product-list">
-                <?php while ($similar_product = mysqli_fetch_assoc($similar_products_query)) { ?>
-                <div class="similar-product">
-                    <a href="product.php?id=<?php echo $similar_product['id']; ?>">
-                        <img src="img/<?php echo $similar_product['image']; ?>" alt="Similar Product">
-                    </a>
-                    <p><?php echo $similar_product['name']; ?></p>
+            <div class="similar-products">
+                <h2>Similar Products</h2>
+                <div class="similar-product-list">
+                    <?php while ($similar_product = mysqli_fetch_assoc($similar_products_query)) { ?>
+                    <div class="similar-product">
+                        <a href="product.php?id=<?php echo $similar_product['id']; ?>">
+                            <img src="img/<?php echo $similar_product['image']; ?>" alt="Similar Product">
+                        </a>
+                        <p><?php echo $similar_product['name']; ?></p>
+                    </div>
+                    <?php } ?>
                 </div>
-                <?php } ?>
             </div>
         </div>
-    </div>
     </section>
+
+    <script type="text/javascript" src="script.js"></script>
     <?php include 'footer.php'; ?>
 </body>
 </html>

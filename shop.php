@@ -153,26 +153,26 @@ if (isset($_GET['cart'])) {
                 while ($fetch_products = mysqli_fetch_assoc($select_products)) {
             ?>
 
-                    <div class="box">
-                        <form method="post" action="shop.php">
-                            <img src="img/<?php echo $fetch_products['image']; ?>">
-                            <h4 style="font-size: 15px; font-weight: 300;color: #333;"><?php echo $fetch_products['name']; ?></h4>
-                            <h4 style="font-size: 15px; font-weight: 300;color: #333;">Price: <?php echo $fetch_products['price']; ?> Taka</h4>
+            <div class="box">
+                <form method="post" action="shop.php">
+                    <img src="img/<?php echo $fetch_products['image']; ?>">
+                    <h4 style="font-size: 15px; font-weight: 300;color: #333;"><?php echo $fetch_products['name']; ?></h4>
+                    <h4 style="font-size: 15px; font-weight: 300;color: #333;">Price: <?php echo $fetch_products['price']; ?> Taka</h4>
 
-                            <input type="hidden" name="id" value="<?php echo $fetch_products['id']; ?>">
-                            <input type="hidden" name="image" value="<?php echo $fetch_products['image']; ?>">
-                            <input type="hidden" name="name" value="<?php echo $fetch_products['name']; ?>">
-                            <input type="hidden" name="price" value="<?php echo $fetch_products['price']; ?>">
+                    <input type="hidden" name="id" value="<?php echo $fetch_products['id']; ?>">
+                    <input type="hidden" name="image" value="<?php echo $fetch_products['image']; ?>">
+                    <input type="hidden" name="name" value="<?php echo $fetch_products['name']; ?>">
+                    <input type="hidden" name="price" value="<?php echo $fetch_products['price']; ?>">
 
-                            <div class="icon">
-                                <a href="product.php?id=<?php echo $fetch_products['id']; ?>" class="bi bi-eye-fill"></a>
-                                <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                                <a href="shop.php?cart=<?php echo $fetch_products['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
-                            </div>
-                        </form>
+                    <div class="icon">
+                        <a href="product.php?id=<?php echo $fetch_products['id']; ?>" class="bi bi-eye-fill"></a>
+                        <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                        <a href="shop.php?cart=<?php echo $fetch_products['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
                     </div>
+                </form>
+            </div>
 
             <?php
                 }
@@ -186,101 +186,6 @@ if (isset($_GET['cart'])) {
             ?>
         </div>
     </section>
-
-    <section class="update-container">
-        <?php
-        if (isset($_GET['view'])) {
-            $edit_id = $_GET['view'];
-
-            $edit_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `product_id`='$edit_id'");
-            if (!$edit_query) {
-                die('Query Failed: ' . mysqli_error($conn));
-            }
-
-            if (mysqli_num_rows($edit_query) > 0) {
-                while ($fetch_products = mysqli_fetch_assoc($edit_query)) {
-        ?>
-
-                    <form method="POST" enctype="multipart/form-data">
-                        <img src="img/<?php echo $fetch_products['image']; ?>">
-
-                        <h4><br><?php echo $fetch_products['name']; ?></h4>
-                        <h4>Price: <?php echo $fetch_products['price']; ?> Taka</h4>
-                        <p>Quantity: <?php echo $fetch_products['product_quantity']; ?></p>
-                        <details>
-                            Category: <?php echo $fetch_products['category']; ?><br>
-                            Description: <?php echo $fetch_products['detail']; ?><br>
-                        </details>
-
-                        <input type="hidden" name="product_id" value="<?php echo $fetch_products['product_id']; ?>">
-                        <div class="icon2">
-                            <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                            <a href="shop.php?cart=<?php echo $fetch_products['product_id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
-                            <a href="shop.php?" class="bi bi-x-lg"></a>
-                        </div>
-                    </form>
-        <?php
-                }
-            }
-
-            echo "<script>document.querySelector('.update-container').style.display='block'</script>";
-        }
-        ?>
-    </section>
-
-    <section class="update-container2">
-        <?php
-        if (isset($_GET['cart'])) {
-            $edit_id = $_GET['cart'];
-            $edit_query = mysqli_query($conn, "SELECT * FROM `products` WHERE product_id='$edit_id'");
-            if (!$edit_query) {
-                die('Query Failed: ' . mysqli_error($conn));
-            }
-
-            if (mysqli_num_rows($edit_query) > 0) {
-                while ($fetch_edit = mysqli_fetch_assoc($edit_query)) {
-        ?>
-                    <form method="POST" enctype="multipart/form-data">
-                        <h1>Delivery Product And Customer Information</h1><br>
-
-                        <img src="img/<?php echo $fetch_edit['image']; ?>">
-
-                        <h4><br><?php echo $fetch_edit['name']; ?></h4>
-                        <h4>Price: <?php echo $fetch_edit['price']; ?> Taka</h4>
-                        <p>Quantity: <?php echo $fetch_edit['product_quantity']; ?></p>
-                        <details>
-                            Category: <?php echo $fetch_edit['category']; ?><br>
-                            Description: <?php echo $fetch_edit['detail']; ?><br>
-                        </details><br>
-
-                        <input type="hidden" name="product_id" value="<?php echo $fetch_edit['product_id']; ?>">
-                        <input type="hidden" name="price" value="<?php echo $fetch_edit['price']; ?>">
-                        <input type="hidden" name="product_quantity" value="<?php echo $fetch_edit['product_quantity']; ?>">
-
-                        <p style="margin-left: -76%;">Required Quantity: </p>
-                        <input type="number" name="cart_quantity" min="1" max="<?php echo $fetch_edit['product_quantity']; ?>">
-                        <p>------------------------Customer Information------------------------</p>
-                        <input type="text" name="full_name" placeholder="Enter your name" class="box" required>
-                        <input type="tel" name="phone_number" placeholder="Enter your phone number" class="box" required>
-                        <textarea name="delivery_address" placeholder="Enter your address" class="box" required></textarea>
-
-                        <div class="icon2">
-                            <button type="submit" name="buy_now" onclick="return confirm('Want to buy this product?')">
-                                <i class="bi bi-credit-card"></i>Buy Now
-                            </button>
-                            <a href="shop.php?" class="bi bi-x-lg"></a>
-                        </div>
-                    </form>
-        <?php
-                }
-            }
-            echo "<script>document.querySelector('.update-container2').style.display='block'</script>";
-        }
-        ?>
-    </section>
-
     <script type="text/javascript" src="script.js"></script>
     <?php include 'footer.php' ;?>
 </body>
