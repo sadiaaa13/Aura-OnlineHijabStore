@@ -64,7 +64,7 @@ if(isset($_POST['update_order'])){
     }
     ?>
     <section class='order-container'>
-    <h1 class='title' style="color: #fff; font-size: 32px; font-weight: 400;">Total Orders</h1>
+    <h1 class='title' style="color: #fff; font-size: 32px; font-weight: 400;">.</h1>
         <div class='box-container'>
             <?php
             $select_orders = mysqli_query($conn, "SELECT * FROM orders") or die('query failed');
