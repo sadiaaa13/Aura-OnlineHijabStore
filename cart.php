@@ -8,7 +8,6 @@ if (!isset($user_id)) {
     header('location:login.php');
 }
 
-// Adding product to cart
 if (isset($_POST['add_to_cart'])) {
     $product_id = $_POST['id'];
     $product_image = $_POST['image'];
@@ -48,6 +47,33 @@ if (isset($_GET['delete_all'])) {
     header('location:cart.php');
 }
 
+// Moving product from wishlist to cart
+if (isset($_GET['move_to_cart'])) {
+    $product_id = $_GET['move_to_cart'];
+
+    // Fetch product details from the wishlist table
+    $wishlist_query = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `pid`='$product_id' AND `user_id`='$user_id'") or die('query failed');
+    
+    if (mysqli_num_rows($wishlist_query) > 0) {
+        $fetch_wishlist = mysqli_fetch_assoc($wishlist_query);
+        $product_image = $fetch_wishlist['image'];
+        $product_name = $fetch_wishlist['name'];
+        $product_price = $fetch_wishlist['price'];
+        $product_quantity = 1; // Default quantity to add to cart
+
+        // Check if the product is already in the cart
+        $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'") or die('query failed');
+        
+        if (mysqli_num_rows($check_cart) > 0) {
+            $message[] = 'Product already added to cart';
+        } else {
+            mysqli_query($conn, "INSERT INTO `cart`(`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')") or die('query failed');
+            $message[] = 'Product added to cart';
+        }
+    } else {
+        $message[] = 'Product not found in wishlist';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -55,13 +81,12 @@ if (isset($_GET['delete_all'])) {
 
 <head>
     <meta charset='UTF-8'>
-     <meta name='viewport' content='width=device-width, initial-scale=1.θ'>
-     <link  rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
-     <link rel='stylesheet' type='text/css' href='main.css'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
+    <link rel='stylesheet' type='text/css' href='main.css'>
     <title>Cart</title>
     <style>
-
         .container {
             width: 100%;
             max-width: 600px;
@@ -91,6 +116,7 @@ if (isset($_GET['delete_all'])) {
             justify-content: center;
             width: 100%;
         }
+
         .card {
             display: flex;
             flex-direction: column;
@@ -104,20 +130,20 @@ if (isset($_GET['delete_all'])) {
             padding: 2rem;
             margin: 1rem;
             line-height: 2;
-            text-transform: uppercase; 
+            text-transform: uppercase;
             position: relative;
             transition: background-color 0.3s, box-shadow 0.3s;
         }
 
-        .box-container .card img{
+        .box-container .card img {
             width: 100%;
             height: 250px;
         }
 
-        .box-container .card .icon{
+        .box-container .card .icon {
             display: flex;
             padding: 0;
-            justify-content: center; 
+            justify-content: center;
             align-items: center;
             background: #8d7968;
             border-radius: 25px;
@@ -126,12 +152,12 @@ if (isset($_GET['delete_all'])) {
         }
 
         .box-container .card .icon button,
-        .box-container .card .icon a{
+        .box-container .card .icon a {
             padding: .8rem 2.5em;
             text-transform: uppercase;
             border-radius: 10px;
             cursor: pointer;
-            width: 40px; 
+            width: 40px;
             height: 40px;
             border-radius: 50%;
             padding: 0;
@@ -158,22 +184,24 @@ if (isset($_GET['delete_all'])) {
             border-radius: 10px;
             cursor: pointer;
         }
-        
-        .button:hover{
+
+        .button:hover {
             text-decoration: none;
         }
+
         .icon a:hover {
             text-decoration: none;
         }
 
-        .dlt, .cart_total, .pay {
+        .dlt,
+        .cart_total,
+        .pay {
             display: flex;
             justify-content: center;
             width: 100%;
             margin-top: 5px;
             margin-bottom: 5px;
         }
-
     </style>
 </head>
 
@@ -200,10 +228,10 @@ if (isset($_GET['delete_all'])) {
                     $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id'") or die('query failed');
                     if (mysqli_num_rows($select_cart) > 0) {
                         while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
-                            $total_amt = $fetch_cart['price'] * $fetch_cart['quantity'];
+                            $total_amt = (float)$fetch_cart['price'] * (int)$fetch_cart['quantity'];
                             $grand_total += $total_amt;
                     ?>
-                            <div class="card">                           
+                            <div class="card">
                                 <img style="margin-top:20px;" src="img/<?php echo $fetch_cart['image']; ?>">
                                 <div class="price" style="margin-left: 100px; color:#3e3f3e;"><?php echo $fetch_cart['price']; ?>/-</div>
                                 <div class="name"><?php echo $fetch_cart['name']; ?></div>
@@ -211,7 +239,7 @@ if (isset($_GET['delete_all'])) {
                                     <input type="hidden" name="update_qty_id" value="<?php echo $fetch_cart['id']; ?>">
                                     <div class="qty">
                                         <input type="number" min="1" name="update_qty" value="<?php echo $fetch_cart['quantity']; ?>">
-                                        <input class="button" style="align-content: center;" type="submit"  name="update_qty_btn" value="update">
+                                        <input class="button" style="align-content: center;" type="submit" name="update_qty_btn" value="update">
                                     </div>
                                 </form>
                                 <div class="total-amt">
@@ -230,7 +258,7 @@ if (isset($_GET['delete_all'])) {
                     ?>
                 </div>
                 <div class="dlt">
-                    <a href="cart.php?delete_all" class="button" onclick="return confirm('Do you want to delete all items in your cart?')">Delete All</a>
+                    <a href="cart.php?delete_all" class="button" onclick="return confirm('Do you want to delete all items from your cart?')">Delete All</a>
                 </div>
                 <div class="cart_total">
                     <p style="margin-top:20px; margin-bottom:30px; text-align: center; font-size: 24px;">Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
