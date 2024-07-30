@@ -101,8 +101,7 @@ if (isset($_GET['delete_all'])) {
         </div>
     </section>
    </div>
-   
-    <script type='text/javascript' src='script.js'></script>
+   <script type='text/javascript' src='script.js'></script>
     <?php include 'footer.php' ;?>
 </body>
 
