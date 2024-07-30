@@ -44,6 +44,7 @@ if (isset($_GET['delete'])) {
     <?php include 'admin_header.php';
     ?>
     <div class="banner"></div>
+    
     <?php
     if (isset($message)) {
         foreach ($message as $message) {
@@ -56,9 +57,11 @@ if (isset($_GET['delete'])) {
         }
     }
     ?>
+    <div class='line4'></div>
     <section class='message-container'>
-        <h1 class='title' style="margin-top:200px;color: #fff; font-size: 32px; font-weight: 400;">Messages from User end</h1>
+    <h1 class='title' style="color: #fff; font-size: 32px; font-weight: 400;">Unread Messages</h1>
         <div class='box-container'>
+            
             <?php
             $select_message = mysqli_query($conn, "SELECT * FROM `message`") or die('query failed');
             if (mysqli_num_rows($select_message) > 0) {
@@ -83,7 +86,11 @@ if (isset($_GET['delete'])) {
                     <?php
                 }
             } else {
-                echo '<p>no products added yet!</p>';
+                echo '
+<div class="empty">
+<p>no products added yet!</p>
+</div>
+';
             }
             ?>
     </section>
