@@ -6,11 +6,13 @@ $user_name = $_SESSION['user_name'];
 
 if (!isset($user_name)) {
     header('location:login.php');
+    exit();
 }
 
 if (isset($_POST['logout'])) {
     session_destroy();
     header('location:login.php');
+    exit();
 }
 
 if (isset($_POST['wishlist_submit'])) {
@@ -22,11 +24,14 @@ if (isset($_POST['wishlist_submit'])) {
     $wishlist_number = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `id`='$product_id' AND `user_id`='$user_id'") or die('query failed');
 
     if (mysqli_num_rows($wishlist_number) > 0) {
-        $_SESSION['messages'][] = 'Product already exists in wishlist';
+        $_SESSION['message'] = 'Product already exists in wishlist';
     } else {
         mysqli_query($conn, "INSERT INTO `wishlist` (`user_id`, `id`, `image`, `name`, `price`) VALUES ('$user_id', '$product_id', '$product_image', '$product_name', '$product_price')") or die('query failed');
-        $_SESSION['messages'][] = 'Product successfully added to your wishlist';
+        $_SESSION['message'] = 'Product successfully added to your wishlist';
     }
+
+    header("Location: search.php?search_query=" . urlencode($_POST['search_query']));
+    exit();
 }
 
 if (isset($_POST['buy_now'])) {
@@ -40,8 +45,7 @@ if (isset($_POST['buy_now'])) {
     $product_quantity2 = $product_quantity - $product_cart_quantity;
     $amount = $product_price * $product_cart_quantity;
 
-    $insert_product = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `id`, `cart_quantity`, `full_name`, `phone_number`, `delivery_address`, `amount`)
-        VALUES ('$user_id', '$product_id', '$product_cart_quantity', '$full_name', '$product_phone_number', '$product_delivery_address', '$amount')");
+    $insert_product = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `id`, `cart_quantity`, `full_name`, `phone_number`, `delivery_address`, `amount`) VALUES ('$user_id', '$product_id', '$product_cart_quantity', '$full_name', '$product_phone_number', '$product_delivery_address', '$amount')");
 
     if (!$insert_product) {
         die('Query Failed: ' . mysqli_error($conn));
@@ -53,10 +57,11 @@ if (isset($_POST['buy_now'])) {
         die('Query Failed: ' . mysqli_error($conn));
     }
 
-    $_SESSION['messages'][] = 'Product added to cart';
     header('location:order.php');
+    exit();
 }
 
+// Handle adding product to cart
 if (isset($_GET['cart'])) {
     $product_id = $_GET['cart'];
 
@@ -71,7 +76,7 @@ if (isset($_GET['cart'])) {
         $product_image = $product['image'];
         $product_name = $product['name'];
         $product_price = $product['price'];
-        $product_quantity = 1;
+        $product_quantity = 1; // Default quantity to add to cart
 
         $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'");
         if (!$check_cart) {
@@ -79,26 +84,25 @@ if (isset($_GET['cart'])) {
         }
 
         if (mysqli_num_rows($check_cart) > 0) {
-            $_SESSION['messages'][] = 'Product already added to cart';
+            $_SESSION['message'] = 'Product already added to cart';
         } else {
             $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
             if (!$insert_cart) {
                 die('Query Failed: ' . mysqli_error($conn));
             }
-            $_SESSION['messages'][] = 'Product added to cart';
+            $_SESSION['message'] = 'Product added to cart';
         }
     } else {
-        $_SESSION['messages'][] = 'Product not found';
+        $_SESSION['message'] = 'Product not found';
     }
 
-    $search_query = isset($_GET['search_query']) ? $_GET['search_query'] : '';
-    header("Location: search.php?search_query=" . urlencode($search_query));
+    header("Location: search.php?search_query=" . urlencode($_GET['search_query']));
     exit();
 }
 
 $search_message = '';
 $products = [];
-$search_query = isset($_GET['search_query']) ? mysqli_real_escape_string($conn, $_GET['search_query']) : '';
+$search_query = '';
 
 if (isset($_POST['search'])) {
     $search_query = mysqli_real_escape_string($conn, $_POST['search_query']);
@@ -122,13 +126,34 @@ if (isset($_POST['search'])) {
     }
 }
 
-$messages = isset($_SESSION['messages']) ? $_SESSION['messages'] : [];
-$_SESSION['messages'] = []; // Clear messages after retrieving
-?>
+if (isset($_GET['search_query'])) {
+    $search_query = mysqli_real_escape_string($conn, $_GET['search_query']);
+    
+    if (!empty($search_query)) {
+        $query = "SELECT * FROM `products` WHERE `name` LIKE '%$search_query%' OR `product_detail` LIKE '%$search_query%'";
+        $result = mysqli_query($conn, $query);
+        if (!$result) {
+            $search_message = 'Query failed: ' . mysqli_error($conn);
+        } else {
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $products[] = $row;
+                }
+            } else {
+                $search_message = 'No products found.';
+            }
+        }
+    }
+}
 
+$messages = [];
+if (isset($_SESSION['message'])) {
+    $messages[] = $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -216,17 +241,23 @@ $_SESSION['messages'] = []; // Clear messages after retrieving
             <div class="message"><?php echo $search_message; ?></div>
         <?php endif; ?>
 
-        <?php foreach ($messages as $msg): ?>
-            <div class="message">
-                <span><?php echo $msg; ?></span>
-                <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
-            </div>
-        <?php endforeach; ?>
+        <?php
+        if ($messages) {
+            foreach ($messages as $msg) {
+                echo '
+                    <div class="message">
+                        <span>' . $msg . '</span>
+                        <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
+                    </div>
+                ';
+            }
+        }
+        ?>
 
         <div class="box-container">
             <?php foreach ($products as $product): ?>
                 <div class="box">
-                    <form method="post" action="search.php">
+                    <form method="post" action="search.php?search_query=<?php echo urlencode($search_query); ?>">
                         <img src="img/<?php echo $product['image']; ?>">
                         <h4 style="font-size: 15px; font-weight: 300;color: #333;"><?php echo $product['name']; ?></h4>
                         <h4 style="font-size: 15px; font-weight: 300;color: #333;">Price: <?php echo $product['price']; ?> Taka</h4>
@@ -235,6 +266,7 @@ $_SESSION['messages'] = []; // Clear messages after retrieving
                         <input type="hidden" name="image" value="<?php echo $product['image']; ?>">
                         <input type="hidden" name="name" value="<?php echo $product['name']; ?>">
                         <input type="hidden" name="price" value="<?php echo $product['price']; ?>">
+                        <input type="hidden" name="search_query" value="<?php echo htmlspecialchars($search_query); ?>">
 
                         <div class="icon">
                             <a href="product.php?id=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-eye-fill"></a>
@@ -251,5 +283,4 @@ $_SESSION['messages'] = []; // Clear messages after retrieving
 
     <?php include 'footer.php'; ?>
 </body>
-
 </html>
