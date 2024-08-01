@@ -34,7 +34,7 @@ if (isset($_POST['wishlist_submit'])) {
             $message[] = 'Product successfully added to your wishlist';
         }
     } else {
-        $message[] = "Sorry! The product can't be added to the wishlist as it's unavailable at this moment.";
+        $message[] = "Sorry! The product can't be added to the wishlist as it's unavailable at this moment";
     }
 }
 
@@ -99,7 +99,7 @@ if (isset($_GET['cart'])) {
                 $message[] = 'Product added to cart';
             }
         } else {
-            $message[] = "Sorry! The product can't be added to the cart as it's unavailable at this moment.";
+            $message[] = "Sorry! The product can't be added to the cart as it's unavailable at this moment";
         }
     } else {
         $message[] = 'Product not found';
