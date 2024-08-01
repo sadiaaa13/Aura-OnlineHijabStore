@@ -14,13 +14,23 @@ if (isset($_POST['wishlist_submit'])) {
     $product_name = $_POST['name'];
     $product_price = $_POST['price'];
 
-    $wishlist_number = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `id`='$product_id' AND `user_id`='$user_id'") or die('query failed');
-
-    if (mysqli_num_rows($wishlist_number) > 0) {
-        $message[] = 'Product already exists in wishlist';
+    // Check product quantity
+    $product_query = mysqli_query($conn, "SELECT product_quantity FROM `products` WHERE `id`='$product_id'");
+    if (!$product_query) {
+        die('Query Failed: ' . mysqli_error($conn));
+    }
+    $product = mysqli_fetch_assoc($product_query);
+    if ($product['product_quantity'] <= 0) {
+        $message[] = "Sorry! The product can't be added to the wishlist as it's unavailable at this moment";
     } else {
-        mysqli_query($conn, "INSERT INTO `wishlist` (`user_id`, `id`, `image`, `name`, `price`) VALUES ('$user_id', '$product_id', '$product_image', '$product_name', '$product_price')") or die('query failed1');
-        $message[] = 'Product successfully added to your wishlist';
+        $wishlist_number = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `id`='$product_id' AND `user_id`='$user_id'") or die('query failed');
+
+        if (mysqli_num_rows($wishlist_number) > 0) {
+            $message[] = 'Product already exists in wishlist';
+        } else {
+            mysqli_query($conn, "INSERT INTO `wishlist` (`user_id`, `id`, `image`, `name`, `price`) VALUES ('$user_id', '$product_id', '$product_image', '$product_name', '$product_price')") or die('query failed1');
+            $message[] = 'Product successfully added to your wishlist';
+        }
     }
 }
 
@@ -40,19 +50,23 @@ if (isset($_GET['cart'])) {
         $product_price = $product['price'];
         $product_quantity = 1;
 
-        $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'");
-        if (!$check_cart) {
-            die('Query Failed: ' . mysqli_error($conn));
-        }
-
-        if (mysqli_num_rows($check_cart) > 0) {
-            $message[] = 'Product already added to cart';
+        if ($product['product_quantity'] <= 0) {
+            $message[] = "Sorry! The product can't be added to the cart as it's unavailable at this moment";
         } else {
-            $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
-            if (!$insert_cart) {
+            $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'");
+            if (!$check_cart) {
                 die('Query Failed: ' . mysqli_error($conn));
             }
-            $message[] = 'Product added to cart';
+
+            if (mysqli_num_rows($check_cart) > 0) {
+                $message[] = 'Product already added to cart';
+            } else {
+                $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
+                if (!$insert_cart) {
+                    die('Query Failed: ' . mysqli_error($conn));
+                }
+                $message[] = 'Product added to cart';
+            }
         }
     } else {
         $message[] = 'Product not found';
