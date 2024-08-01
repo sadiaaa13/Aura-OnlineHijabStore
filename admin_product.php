@@ -107,6 +107,19 @@ if (isset($_POST['update_product'])) {
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
     <link rel='stylesheet' type='text/css' href='aura.css'>
     <title>admin pannel</title>
+    <style>
+    /* Chrome, Safari, Edge, Opera */
+    .no-spinner::-webkit-outer-spin-button,
+    .no-spinner::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    .no-spinner[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
 </head>
 
 <body>
@@ -137,7 +150,7 @@ if (isset($_POST['update_product'])) {
             </div>
             <div class="input-field">
                 <label>product price</label>
-                <input type="number" name="price" required min="1" step="0.01" placeholder="Enter the price">
+                <input type="number" name="price" required min="1" step="0.01" placeholder="Enter the price" class="no-spinner">
             </div>
             <div class="input-field">
                 <label>product detail</label>
@@ -153,7 +166,8 @@ if (isset($_POST['update_product'])) {
     </section>
     <div class="line3"></div>
     <section class="show-products">
-        <div class="box-container">
+    <h1 class='title' style="margin-top: -40px; color:  #555; font-size: 32px; font-weight: 400;">Products</h1>
+        <div class="box-container" style="margin-top: -10px;">
             <?php
             $select_products = mysqli_query($conn, "SELECT * FROM `products` ") or die('query failed');
             if (mysqli_num_rows($select_products) > 0) {
@@ -203,7 +217,7 @@ if (isset($_POST['update_product'])) {
                         <input type="hidden" name="update_id" value="<?php echo $fetch_edit['id']; ?> ">
                         <input type="text"  name="update_name" value="<?php echo $fetch_edit['name']; ?> ">
                         <input type="number" name="update_quantity" min="0" value="<?php echo $fetch_edit['product_quantity']; ?>">
-                        <input type="number" name="update_price" min="1" value="<?php echo $fetch_edit['price']; ?>" step="0.01">
+                        <input type="number" name="update_price" min="1" value="<?php echo $fetch_edit['price']; ?>" step="0.01" class="no-spinner">
                         <textarea name="update_detail"><?php echo $fetch_edit['product_detail']; ?> </textarea>
                         <input type="file" name="update_image" accept="img/jpg, img/jpeg, img/png, img/webp">
                         <input type="submit" name="update_product" value="update" class="edit">
