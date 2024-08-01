@@ -20,13 +20,21 @@ if (isset($_POST['wishlist_submit'])) {
     $product_name = $_POST['name'];
     $product_price = $_POST['price'];
 
-    $wishlist_number = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `id`='$product_id' AND `user_id`='$user_id'") or die('query failed');
+    // Check product quantity
+    $product_check_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id`='$product_id'") or die('query failed');
+    $product = mysqli_fetch_assoc($product_check_query);
 
-    if (mysqli_num_rows($wishlist_number) > 0) {
-        $message[] = 'Product already exists in wishlist';
+    if ($product['product_quantity'] > 0) {
+        $wishlist_number = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE `id`='$product_id' AND `user_id`='$user_id'") or die('query failed');
+
+        if (mysqli_num_rows($wishlist_number) > 0) {
+            $message[] = 'Product already exists in wishlist';
+        } else {
+            mysqli_query($conn, "INSERT INTO `wishlist` (`user_id`, `id`, `image`, `name`, `price`) VALUES ('$user_id', '$product_id', '$product_image', '$product_name', '$product_price')") or die('query failed1');
+            $message[] = 'Product successfully added to your wishlist';
+        }
     } else {
-        mysqli_query($conn, "INSERT INTO `wishlist` (`user_id`, `id`, `image`, `name`, `price`) VALUES ('$user_id', '$product_id', '$product_image', '$product_name', '$product_price')") or die('query failed1');
-        $message[] = 'Product successfully added to your wishlist';
+        $message[] = "Sorry! The product can't be added to the wishlist as it's unavailable at this moment.";
     }
 }
 
@@ -69,24 +77,29 @@ if (isset($_GET['cart'])) {
 
     if (mysqli_num_rows($product_query) > 0) {
         $product = mysqli_fetch_assoc($product_query);
-        $product_image = $product['image'];
-        $product_name = $product['name'];
-        $product_price = $product['price'];
-        $product_quantity = 1; // Default quantity to add to cart
 
-        $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'");
-        if (!$check_cart) {
-            die('Query Failed: ' . mysqli_error($conn));
-        }
+        if ($product['product_quantity'] > 0) {
+            $product_image = $product['image'];
+            $product_name = $product['name'];
+            $product_price = $product['price'];
+            $product_quantity = 1; // Default quantity to add to cart
 
-        if (mysqli_num_rows($check_cart) > 0) {
-            $message[] = 'Product already added to cart';
-        } else {
-            $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
-            if (!$insert_cart) {
+            $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'");
+            if (!$check_cart) {
                 die('Query Failed: ' . mysqli_error($conn));
             }
-            $message[] = 'Product added to cart';
+
+            if (mysqli_num_rows($check_cart) > 0) {
+                $message[] = 'Product already added to cart';
+            } else {
+                $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
+                if (!$insert_cart) {
+                    die('Query Failed: ' . mysqli_error($conn));
+                }
+                $message[] = 'Product added to cart';
+            }
+        } else {
+            $message[] = "Sorry! The product can't be added to the cart as it's unavailable at this moment.";
         }
     } else {
         $message[] = 'Product not found';
@@ -103,12 +116,12 @@ if (isset($_GET['cart'])) {
 <!DOCTYPE html>
 <html lang="en">
 
-<head>     
+<head>
     <meta charset='UTF-8'>
-     <meta name='viewport' content='width=device-width, initial-scale=1.θ'>
-     <link  rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
-     <link rel='stylesheet' type='text/css' href='main.css'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.θ'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
+    <link rel='stylesheet' type='text/css' href='main.css'>
     <title>Shop</title>
 
     <style>
@@ -187,7 +200,7 @@ if (isset($_GET['cart'])) {
         </div>
     </section>
     <script type="text/javascript" src="script.js"></script>
-    <?php include 'footer.php' ;?>
+    <?php include 'footer.php'; ?>
 </body>
 
 </html>
