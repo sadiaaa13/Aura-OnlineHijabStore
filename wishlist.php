@@ -48,29 +48,36 @@ if (isset($_GET['delete_all'])) {
 if (isset($_GET['move_to_cart'])) {
     $product_id = $_GET['move_to_cart'];
 
-    // Fetch product details from the wishlist table
-    $wishlist_query = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE id='$product_id' AND user_id='$user_id'") or die('query failed');
-    if (mysqli_num_rows($wishlist_query) > 0) {
-        $fetch_wishlist = mysqli_fetch_assoc($wishlist_query);
-        $product_image = $fetch_wishlist['image'];
-        $product_name = $fetch_wishlist['name'];
-        $product_price = $fetch_wishlist['price'];
-        $product_quantity = 1; // Default quantity to add to cart
-
-        // Check if the product is already in the cart
-        $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE pid='$product_id' AND user_id='$user_id'") or die('query failed');
-        if (mysqli_num_rows($check_cart) > 0) {
-            $message[] = 'Product already added to cart';
-        } else {
-            // Insert product into cart
-            mysqli_query($conn, "INSERT INTO `cart`(user_id, pid, name, price, quantity, image) VALUES('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')") or die('query failed');
-            $message[] = 'Product added to cart';
-
-            // Delete product from wishlist
-            mysqli_query($conn, "DELETE FROM `wishlist` WHERE id='$product_id' AND user_id='$user_id'") or die('query failed');
-        }
+    // Check if product_quantity is greater than 0
+    $check_quantity = mysqli_query($conn, "SELECT product_quantity FROM `products` WHERE `id`='$product_id'") or die('query failed');
+    $quantity_result = mysqli_fetch_assoc($check_quantity);
+    if ($quantity_result['product_quantity'] <= 0) {
+        $message[] = "Sorry! The product can't be added to the wishlist as it's unavailable at this moment.";
     } else {
-        $message[] = 'Product not found in wishlist';
+        // Fetch product details from the wishlist table
+        $wishlist_query = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE id='$product_id' AND user_id='$user_id'") or die('query failed');
+        if (mysqli_num_rows($wishlist_query) > 0) {
+            $fetch_wishlist = mysqli_fetch_assoc($wishlist_query);
+            $product_image = $fetch_wishlist['image'];
+            $product_name = $fetch_wishlist['name'];
+            $product_price = $fetch_wishlist['price'];
+            $product_quantity = 1; // Default quantity to add to cart
+
+            // Check if the product is already in the cart
+            $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE pid='$product_id' AND user_id='$user_id'") or die('query failed');
+            if (mysqli_num_rows($check_cart) > 0) {
+                $message[] = 'Product already added to cart';
+            } else {
+                // Insert product into cart
+                mysqli_query($conn, "INSERT INTO `cart`(user_id, pid, name, price, quantity, image) VALUES('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')") or die('query failed');
+                $message[] = 'Product added to cart';
+
+                // Delete product from wishlist
+                mysqli_query($conn, "DELETE FROM `wishlist` WHERE id='$product_id' AND user_id='$user_id'") or die('query failed');
+            }
+        } else {
+            $message[] = 'Product not found in wishlist';
+        }
     }
 }
 ?>
