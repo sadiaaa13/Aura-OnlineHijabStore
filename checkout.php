@@ -20,18 +20,24 @@ if (isset($_POST['order_btn'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $number = mysqli_real_escape_string($conn, $_POST['number']);
     $method = mysqli_real_escape_string($conn, $_POST['method']);
-    $address = mysqli_real_escape_string($conn, 'flat no. '.$_POST['flate'].','.$_POST['street'].','.$_POST['city'].','.$_POST['state'].','.$_POST['country'].','.$_POST['pin']);
+    $address = mysqli_real_escape_string($conn, 'flat no. ' . $_POST['flate'] . ',' . $_POST['street'] . ',' . $_POST['city'] . ',' . $_POST['state'] . ',' . $_POST['country'] . ',' . $_POST['pin']);
     $placed_on = date('d-M-Y');
     $cart_total = 0;
     $cart_product = [];
-    
+
     $cart_query = mysqli_query($conn, "SELECT * FROM cart WHERE user_id='$user_id'") or die('query failed');
-    
+
     if (mysqli_num_rows($cart_query) > 0) {
         while ($cart_item = mysqli_fetch_assoc($cart_query)) {
-            $cart_product[] = $cart_item['name'].' ('.$cart_item['quantity'].')';
+            $cart_product[] = $cart_item['name'] . ' (' . $cart_item['quantity'] . ')';
             $sub_total = ($cart_item['price'] * $cart_item['quantity']);
             $cart_total += $sub_total;
+
+            // Update product quantity in the products table
+            $product_id = $cart_item['pid'];
+            $cart_quantity = $cart_item['quantity'];
+            $update_quantity_query = "UPDATE products SET product_quantity = product_quantity - $cart_quantity WHERE id = '$product_id'";
+            mysqli_query($conn, $update_quantity_query) or die('query failed');
         }
     }
     $total_products = implode(', ', $cart_product);
