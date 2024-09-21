@@ -1,5 +1,7 @@
 <?php
-class ProductManager {
+include 'ProductManagementInterface.php';
+
+class ProductManager implements ProductManagementInterface {
     private $db;
 
     public function __construct($db) {
