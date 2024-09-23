@@ -22,7 +22,7 @@ if (isset($_POST['submit-btn'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <link rel="stylesheet" href="aura.css">
+    <link rel="stylesheet" href="style1.css">
 </head>
 <body>
     <section class="form-container">
