@@ -135,6 +135,21 @@ $select_old_offers = mysqli_query($conn, "SELECT * FROM offers WHERE status = 'o
         .product-tile img.selected {
             border: 2px solid green;
         }
+        .no-border-button {
+        text-transform: uppercase;
+        background: #fff;
+        border: none;
+        cursor: pointer;
+        width: 150px;
+        padding: 0.5rem 0; 
+        margin: 10px;
+        outline: none; 
+        box-shadow: none; 
+    }
+
+    .no-border-button:focus {
+        outline: none; /* Ensure no outline when focused */
+    }
     </style>
 </head>
 <body>
@@ -226,8 +241,17 @@ $select_old_offers = mysqli_query($conn, "SELECT * FROM offers WHERE status = 'o
                 echo '<p><strong>Valid From:</strong> ' . htmlspecialchars($offer['valid_from']) . '</p>';
                 echo '<p><strong>Valid To:</strong> ' . htmlspecialchars($offer['valid_to']) . '</p>';
                 echo '<div class="offer-images">' . $images_html . '</div>';
-                echo '<a href="admin_add_offer_products.php?edit=' . $offer['id'] . '">Edit</a> | ';
-                echo '<a href="admin_add_offer_products.php?delete=' . $offer['id'] . '" onclick="return confirm(\'Are you sure you want to delete this offer?\')">Delete</a>';
+                echo '<form action="admin_add_offer_products.php" method="get" style="border: none; padding: 0; margin: 0; background: none; display: inline;">
+                        <input type="hidden" name="edit" value="' . $offer['id'] . '">
+                        <button class="no-border-button" type="submit">Edit</button>
+                    </form>';
+                
+                echo '<form action="admin_add_offer_products.php" method="get" style="border: none; padding: 0; margin: 0; background: none; display: inline;" onsubmit="return confirm(\'Are you sure you want to delete this offer?\')">
+                        <input type="hidden" name="delete" value="' . $offer['id'] . '">
+                        <button class="no-border-button" type="submit">Delete</button>
+                    </form>';
+        
+
                 echo '</div>';
             }
         } else {
