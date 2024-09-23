@@ -164,6 +164,21 @@ if (isset($_SESSION['message'])) {
     $messages[] = $_SESSION['message'];
     unset($_SESSION['message']);
 }
+
+// Fetch all products and their offers
+$select_products = mysqli_query($conn, "SELECT * FROM `products` ORDER BY id DESC") or die('query failed');
+
+// Fetch active offers
+$offers_query = mysqli_query($conn, "SELECT * FROM `offers` WHERE valid_to >= CURDATE()") or die('query failed');
+
+// Prepare an array to store the offers with the related product IDs
+$offers = [];
+while ($offer = mysqli_fetch_assoc($offers_query)) {
+    $offer_product_ids = explode(',', $offer['product_ids']);
+    foreach ($offer_product_ids as $product_id) {
+        $offers[$product_id] = $offer['discount'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -268,29 +283,53 @@ if (isset($_SESSION['message'])) {
         ?>
 
         <div class="box-container">
-            <?php foreach ($products as $product): ?>
-                <div class="box">
-                    <form method="post" action="search.php?search_query=<?php echo urlencode($search_query); ?>">
-                        <img src="img/<?php echo $product['image']; ?>">
-                        <h4 style="font-size: 15px; font-weight: 300;color: #333;"><?php echo $product['name']; ?></h4>
-                        <h4 style="font-size: 15px; font-weight: 300;color: #333;">Price: <?php echo $product['price']; ?> Taka</h4>
+        <?php foreach ($products as $product): ?>
+        <?php
+            $product_id = $product['id'];
+            $original_price = $product['price'];
+            $discount_price = $original_price;
 
-                        <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
-                        <input type="hidden" name="image" value="<?php echo $product['image']; ?>">
-                        <input type="hidden" name="name" value="<?php echo $product['name']; ?>">
-                        <input type="hidden" name="price" value="<?php echo $product['price']; ?>">
-                        <input type="hidden" name="search_query" value="<?php echo htmlspecialchars($search_query); ?>">
+            // If the product is in an offer, calculate the discounted price
+            if (isset($offers[$product_id])) {
+                $discount_percentage = $offers[$product_id];
+                $discount_price = $original_price - ($original_price * ($discount_percentage / 100));
+            }
+        ?>
+        <div class="box">
+            <form method="post" action="search.php?search_query=<?php echo urlencode($search_query); ?>">
+                <img src="img/<?php echo $product['image']; ?>">
+                <h4 style="font-size: 15px; font-weight: 300;color: #333;"><?php echo $product['name']; ?></h4>
+                
+                <?php if ($discount_price != $original_price): ?>
+                    <h4 style="font-size: 12px; font-weight: 300; color: #A52A2A; text-decoration: line-through;">
+                        Original Price: <?php echo $original_price; ?> Taka
+                    </h4>
+                    <h4 style="font-size: 12px; font-weight: 300; color: #007a55">
+                        Discounted Price: <?php echo number_format($discount_price, 2); ?> Taka
+                    </h4>
+                <?php else: ?>
+                    <h4 style="font-size: 15px; font-weight: 300;color: #333;">
+                        Price: <?php echo $original_price; ?> Taka
+                    </h4>
+                <?php endif; ?>
 
-                        <div class="icon">
-                            <a href="product.php?id=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-eye-fill"></a>
-                            <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                            <a href="search.php?cart=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
-                        </div>
-                    </form>
+                <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
+                <input type="hidden" name="image" value="<?php echo $product['image']; ?>">
+                <input type="hidden" name="name" value="<?php echo $product['name']; ?>">
+                <input type="hidden" name="price" value="<?php echo intval($discount_price); ?>"> <!-- Use discounted price without decimals -->
+                <input type="hidden" name="search_query" value="<?php echo htmlspecialchars($search_query); ?>">
+
+                <div class="icon">
+                    <a href="product.php?id=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-eye-fill"></a>
+                    <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                    <a href="search.php?cart=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
                 </div>
-            <?php endforeach; ?>
+            </form>
+        </div>
+    <?php endforeach; ?>
+
         </div>
     </section>
 

@@ -8,10 +8,13 @@ if (!isset($user_name)) {
     header('location:login.php');
 }
 
+$current_date = date('Y-m-d');
+
 if (isset($_POST['wishlist_submit'])) {
     $product_id = $_POST['id'];
     $product_image = $_POST['image'];
     $product_name = $_POST['name'];
+    // Use discounted price if available
     $product_price = $_POST['price'];
 
     // Check product quantity
@@ -45,14 +48,25 @@ if (isset($_GET['cart'])) {
 
     if (mysqli_num_rows($product_query) > 0) {
         $product = mysqli_fetch_assoc($product_query);
-        $product_image = $product['image'];
-        $product_name = $product['name'];
-        $product_price = $product['price'];
-        $product_quantity = 1;
 
-        if ($product['product_quantity'] <= 0) {
-            $message[] = "Sorry! The product can't be added to the cart as it's unavailable at this moment";
-        } else {
+        if ($product['product_quantity'] > 0) {
+            $product_image = $product['image'];
+            $product_name = $product['name'];
+
+            // Calculate discounted price if applicable
+            $product_price = $product['price'];
+            $discounted_price = $product['price']; // Default to regular price
+
+            // Check for valid offer
+            $offer_query = mysqli_query($conn, "SELECT discount FROM `offers` WHERE FIND_IN_SET('$product_id', product_ids) > 1 AND valid_to >= '$current_date'") or die('query failed');
+            if (mysqli_num_rows($offer_query) > 0) {
+                $offer = mysqli_fetch_assoc($offer_query);
+                $discount_percentage = $offer['discount'];
+                $discounted_price = $product_price - ($product_price * ($discount_percentage / 100));
+            }
+
+            $product_quantity = 1; // Default quantity to add to cart
+
             $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'");
             if (!$check_cart) {
                 die('Query Failed: ' . mysqli_error($conn));
@@ -61,25 +75,47 @@ if (isset($_GET['cart'])) {
             if (mysqli_num_rows($check_cart) > 0) {
                 $message[] = 'Product already added to cart';
             } else {
-                $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')");
+                $insert_cart = mysqli_query($conn, "INSERT INTO `cart` (`user_id`, `pid`, `name`, `price`, `quantity`, `image`) VALUES ('$user_id', '$product_id', '$product_name', '$discounted_price', '$product_quantity', '$product_image')");
                 if (!$insert_cart) {
                     die('Query Failed: ' . mysqli_error($conn));
                 }
                 $message[] = 'Product added to cart';
             }
+        } else {
+            $message[] = "Sorry! The product can't be added to the cart as it's unavailable at this moment";
         }
     } else {
         $message[] = 'Product not found';
     }
 }
 
+// Fetch the product details
 $product_id = $_GET['id'];
-$product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id`='$product_id'");
+$product_query = mysqli_query($conn, "
+    SELECT p.*, o.discount, o.valid_to
+    FROM `products` p
+    LEFT JOIN `offers` o ON FIND_IN_SET(p.id, o.product_ids) > 0
+    WHERE p.id = '$product_id'
+");
 if (!$product_query) {
     die('Query Failed: ' . mysqli_error($conn));
 }
 
 $product = mysqli_fetch_assoc($product_query);
+
+// Calculate the discounted price if a discount is available and the offer is valid
+if (isset($product['discount']) && isset($product['valid_to'])) {
+    if ($current_date <= $product['valid_to']) {
+        $product['discounted_price'] = $product['price'] - ($product['price'] * ($product['discount'] / 100));
+    } else {
+        // If offer is expired, clear discount-related data
+        $product['discount'] = null;
+        $product['valid_to'] = null;
+        $product['discounted_price'] = $product['price'];
+    }
+} else {
+    $product['discounted_price'] = $product['price'];
+}
 
 // Fetch similar products based on product detail keywords
 $product_keywords = explode(' ', $product['product_detail']);
@@ -92,19 +128,42 @@ $similar_products_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `i
 if (!$similar_products_query) {
     die('Similar Products Query failed: ' . mysqli_error($conn));
 }
+
+$product_id = $_GET['id']; // Get the product ID from the URL
+
+// Fetch product details
+$product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id`='$product_id'");
+$product = mysqli_fetch_assoc($product_query);
+
+// Fetch related offers
+$offers_query = mysqli_query($conn, "SELECT * FROM `offers` WHERE FIND_IN_SET('$product_id', `product_ids`) AND valid_to >= CURDATE()");
+$offers = [];
+while ($offer = mysqli_fetch_assoc($offers_query)) {
+    $offers[] = $offer;
+}
+
+// Calculate original and discounted prices
+$original_price = $product['price'];
+$discounted_price = $original_price;
+
+if (!empty($offers)) {
+    foreach ($offers as $offer) {
+        $discount_percentage = $offer['discount'];
+        $discounted_price -= ($original_price * ($discount_percentage / 100));
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css'>
-    <link rel='stylesheet' type='text/css' href='main.css'>
     <title>Product Details</title>
     <style>
-        .container {
+               .container {
             width: 100%;
             max-width: 600px;
             margin: 80px auto 40px;
@@ -295,13 +354,13 @@ if (!$similar_products_query) {
                 width: 40px;
                 height: 40px;
             }
-        
     </style>
 </head>
 <body>
-    <?php include 'header.php'; ?>
 
-    <section class="form-container1" style="background: linear-gradient(to bottom, #8d7968,#bab8b1); padding:20px; margin-top:-20px;">
+<?php include 'header.php'; ?>
+
+<section class="form-container1" style="background: linear-gradient(to bottom, #8d7968,#bab8b1); padding:20px; margin-top:-20px;">
         <h1 style="color: #3e3f3e; font-size: 32px; margin-top:100px;">Product Details</h1>
         <?php
         if (isset($message)) {
@@ -316,16 +375,39 @@ if (!$similar_products_query) {
         }
         ?>
         <div class="container">
-            <div class="product-details">
+        <div class="product-details">
                 <form method="post" action="product.php?id=<?php echo $product['id']; ?>">
                     <img src="img/<?php echo $product['image']; ?>">
                     <h4 style="font-size: 15px; font-weight: 300; color: #333;"><?php echo $product['name']; ?></h4>
-                    <h4 style="font-size: 15px; font-weight: 300; color: #333;">Price: <?php echo $product['price']; ?> Taka</h4>
+                    
+                    <h4 style="font-size: 15px; font-weight: 300; color: #333;">
+                        <?php if (!empty($offers)): ?>
+                            <p style="font-size: 18px; color: #A52A2A; font-weight: 400;" class="product-price">
+                                Original Price: <del>Taka<?php echo $product['price']; ?></del> </p>
+                            <p style="color: #333;"> Discounted Price: Taka<?php echo number_format($discounted_price, 2); ?></p>
+                        <?php else: ?>
+                            <p style="font-size: 18px; font-weight: 400;" class="product-price">
+                                Price: Taka<?php echo $product['price']; ?>
+                            </p>
+                        <?php endif; ?>
+                            <?php if (!empty($offers)): ?>
+                            <h5>Offer Name:</h5>
+                            <ul>
+                                <?php foreach ($offers as $offer): ?>
+                                    <li><?php echo $offer['title']; ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+
+                        <?php if (isset($product['valid_to'])): ?>
+                            <p>Offer valid until: <?php echo $product['valid_to']; ?></p>
+                        <?php endif; ?>
+                    </h4>
 
                     <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                     <input type="hidden" name="image" value="<?php echo $product['image']; ?>">
                     <input type="hidden" name="name" value="<?php echo $product['name']; ?>">
-                    <input type="hidden" name="price" value="<?php echo $product['price']; ?>">
+                    <input type="hidden" name="price" value="<?php echo intval($discounted_price); ?>">
                     <p class="product-availability">Availability: <?php echo ($product['product_quantity'] > 0) ? 'In Stock' : 'Out of Stock'; ?></p>
                     <p class="product-detail"><?php echo $product['product_detail']; ?></p>
 
@@ -337,6 +419,7 @@ if (!$similar_products_query) {
                     </div>
                 </form>
             </div>
+
             <div class="similar-products">
                 <h2>Similar Products</h2>
                 <div class="similar-product-list">
@@ -351,9 +434,9 @@ if (!$similar_products_query) {
                 </div>
             </div>
         </div>
-    </section>
 
+    </section>  
     <script type="text/javascript" src="script.js"></script>
-    <?php include 'footer.php'; ?>
+<?php include 'footer.php'; ?>
 </body>
 </html>

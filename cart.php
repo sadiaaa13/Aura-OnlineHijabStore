@@ -1,5 +1,4 @@
 <?php
-
 include 'connection.php';
 session_start();
 $user_id = $_SESSION['user_id'];
@@ -217,65 +216,109 @@ if (isset($_GET['move_to_cart'])) {
     <div style="background: linear-gradient(to bottom, #8d7968, #bab8b1); margin-top:-20px; padding:20px;">
         <h1 style="font-size: 32px; color:#3e3f3e; font-weight:400; text-align:center; margin-top:100px">Products Added in Cart</h1>
 
-        <section class="shop">
+<section class="shop">
+    <?php
+    if (isset($message)) {
+
+        foreach ($message as $msg) {
+            echo '<div class="message">
+                <span>' . $msg . '</span>
+                <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
+            </div>';
+        }
+    }
+    ?>
+    <section class='message-container'>
+        <div class='box-container'>
+        <?php
+            // Fetching all available offers from the offers table
+            $offers_query = mysqli_query($conn, "SELECT * FROM `offers` WHERE `valid_to` >= CURDATE()") or die('query failed');
+            $offers = array();
+
+            while ($row = mysqli_fetch_assoc($offers_query)) {
+                // Extract product IDs and discount from the offers
+                $offer_product_ids = explode(',', $row['product_ids']);
+                $offers[] = [
+                    'product_ids' => $offer_product_ids,
+                    'discount' => (float)$row['discount']
+                ];
+            }
+
+            // Displaying products in the cart
+            $grand_total = 0;
+            $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id'") or die('query failed');
+
+            if (mysqli_num_rows($select_cart) > 0) {
+                while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
+                    $original_price = (float)$fetch_cart['price'];
+                    $discounted_price = $original_price; // Default to original price
+
+                    // Check if the product is part of any offer
+                    foreach ($offers as $offer) {
+                        if (in_array($fetch_cart['pid'], $offer['product_ids'])) {
+                            $discount_percentage = $offer['discount'];
+                            $discounted_price = $original_price - ($original_price * ($discount_percentage / 100));
+                            break; // If matched, no need to check other offers
+                        }
+                    }
+
+                    // Calculate total price based on quantity
+                    $total_amt = $discounted_price * (int)$fetch_cart['quantity'];
+                    $grand_total += $total_amt;
+            ?>
+                    <div class="card">
+                        <img style="margin-top:20px;" src="img/<?php echo $fetch_cart['image']; ?>">
+                        
+                        <!-- Display price -->
+                        <div class="price" style="margin-left: 100px; color:#3e3f3e;">
+                            <?php 
+                                if ($discount_percentage > 0) {
+                                    echo "$discounted_price/-"; // Show discounted price
+                                } else {
+                                    echo "$original_price/-"; // Show original price if no discount
+                                }
+                            ?>
+                        </div>
+
+                        <div class="name"><?php echo $fetch_cart['name']; ?></div>
+                        <form method="post">
+                            <input type="hidden" name="update_qty_id" value="<?php echo $fetch_cart['id']; ?>">
+                            <div class="qty">
+                                <input type="number" min="1" name="update_qty" value="<?php echo $fetch_cart['quantity']; ?>">
+                                <input class="button" style="align-content: center;" type="submit" name="update_qty_btn" value="update">
+                            </div>
+                        </form>
+                        <div class="total-amt">
+                            Total <span><?php echo $total_amt; ?>/-</span>
+                        </div>
+                        <div class="icon">
+                            <a href="product.php?id=<?php echo $fetch_cart['pid']; ?>" class="bi bi-eye-fill"></a>
+                            <a href="cart.php?delete=<?php echo $fetch_cart['id']; ?>" class="bi bi-x" onclick="return confirm('Do you want to delete this product from your cart?')"></a>
+                        </div>
+                    </div>
             <?php
-            if (isset($message)) {
-                foreach ($message as $msg) {
-                    echo '<div class="message">
-                        <span>' . $msg . '</span>
-                        <i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i>
-                    </div>';
                 }
+            } else {
+                echo '<p class="empty">No products added yet!</p>';
             }
             ?>
-            <section class='message-container'>
-                <div class='box-container'>
-                    <?php
-                    $grand_total = 0;
-                    $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id'") or die('query failed');
-                    if (mysqli_num_rows($select_cart) > 0) {
-                        while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
-                            $total_amt = (float)$fetch_cart['price'] * (int)$fetch_cart['quantity'];
-                            $grand_total += $total_amt;
-                    ?>
-                            <div class="card">
-                                <img style="margin-top:20px;" src="img/<?php echo $fetch_cart['image']; ?>">
-                                <div class="price" style="margin-left: 100px; color:#3e3f3e;"><?php echo $fetch_cart['price']; ?>/-</div>
-                                <div class="name"><?php echo $fetch_cart['name']; ?></div>
-                                <form method="post">
-                                    <input type="hidden" name="update_qty_id" value="<?php echo $fetch_cart['id']; ?>">
-                                    <div class="qty">
-                                        <input type="number" min="1" name="update_qty" value="<?php echo $fetch_cart['quantity']; ?>">
-                                        <input class="button" style="align-content: center;" type="submit" name="update_qty_btn" value="update">
-                                    </div>
-                                </form>
-                                <div class="total-amt">
-                                    Total <span><?php echo $total_amt; ?>/-</span>
-                                </div>
-                                <div class="icon">
-                                    <a href="product.php?id=<?php echo $fetch_cart['pid']; ?>" class="bi bi-eye-fill"></a>
-                                    <a href="cart.php?delete=<?php echo $fetch_cart['id']; ?>" class="bi bi-x" onclick="return confirm('Do you want to delete this product from your cart?')"></a>
-                                </div>
-                            </div>
-                    <?php
-                        }
-                    } else {
-                        echo '<p class="empty">No products added yet!</p>';
-                    }
-                    ?>
-                </div>
-                <div class="dlt">
-                    <a href="cart.php?delete_all" class="button" onclick="return confirm('Do you want to delete all items from your cart?')">Delete All</a>
-                </div>
-                <div class="cart_total">
-                    <p style="margin-top:20px; margin-bottom:30px; text-align: center; font-size: 24px;">Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
-                </div>
-                <div class="pay" style="gap: 40px">
-                    <a href="shop.php" class="button">Continue Shopping</a>
-                    <a href="checkout.php" class="button <?php echo ($grand_total > 0) ? '' : 'disabled'; ?>" onclick="return confirm('Proceed to checkout?')">Proceed to Checkout</a>
-                </div>
-            </section>
-        </section>
+        </div>
+
+        <div class="dlt">
+            <a href="cart.php?delete_all" class="button" onclick="return confirm('Do you want to delete all items from your cart?')">Delete All</a>
+        </div>
+
+        <div class="cart_total">
+            <p style="margin-top:20px; margin-bottom:30px; text-align: center; font-size: 24px;">Total amount payable: <span><?php echo $grand_total; ?>/-</span></p>
+        </div>
+
+        <div class="pay" style="gap: 40px">
+            <a href="shop.php" class="button">Continue Shopping</a>
+            <a href="checkout.php" class="button <?php echo ($grand_total > 0) ? '' : 'disabled'; ?>" onclick="return confirm('Proceed to checkout?')">Proceed to Checkout</a>
+        </div>
+    </section>
+</section>
+
     </div>
 
     <script type="text/javascript" src="script.js"></script>
