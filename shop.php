@@ -111,7 +111,7 @@ if (isset($_GET['cart'])) {
                 if (!$insert_cart) {
                     die('Query Failed: ' . mysqli_error($conn));
                 }
-                $message[] = 'Product added to cart with price: ' . $discount_price . ' Taka';
+                $message[] = 'Product added to cart';
             }
         } else {
             $message[] = "Sorry! The product can't be added to the cart as it's unavailable at this moment";
