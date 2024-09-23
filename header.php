@@ -17,6 +17,7 @@
                 <a href="index.php">home</a>
                 <a href="about.php">about us</a>
                 <a href="shop.php">shop</a>
+                <a href="offers.php">offer</a>
                 <a href="order.php">order</a>
                 <a href="contact.php">contact</a>
             </nav>
