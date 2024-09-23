@@ -29,12 +29,35 @@
             <a href="search.php"><u class="bi bi-search" id="search-btn"></u></a>
         </div>
         <div class="user-box">
-            <p>username: <span> <?php echo $_SESSION['user_name'];?></span></p>
-            <p>Email: <span> <?php echo $_SESSION['user_email'];?></span></p>
-            <form method="post">
-              <button type="submit" name="logout"class="logout-btn">log out</button>
-            </form>
+            <?php
+            if (isset($_SESSION['user_id'])) {
+                // If the user is logged in, display their information
+                ?>
+                <p>Username: <span> <?php echo $_SESSION['user_name']; ?></span></p>
+                <p>Email: <span> <?php echo $_SESSION['user_email']; ?></span></p>
+                <form method="post">
+                    <button type="submit" name="logout" class="logout-btn">Log Out</button>
+                </form>
+                <?php
+            } else {
+                // If the user is not logged in, show the login button
+                ?>
+                <form method="get" action="login.php">
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+                <?php
+            }
+            ?>
         </div>
+
+        <?php
+        // Handle logout action
+        if (isset($_POST['logout'])) {
+            session_destroy();
+            header('location:index.php'); // Redirect to login page after logout
+        }
+        ?>
+
         </div>
     </header>
     <script type='text/javascript' src='mainscript.js'></script>
