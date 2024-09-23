@@ -128,6 +128,16 @@ input[type=submit] {
 }
 
 /*........form containr......*/
+.form {
+    width: 150px;
+    height: 50px;
+    border: none; /* Removes the border */
+    padding: 0; /* Removes any default padding */
+    margin: 0; /* Removes any default margin */
+    background: none; /* Makes the background transparent */
+    display: inline; /* Keeps it inline with other elements */
+}
+
 .form-container {
     background: var(--orange);
     width: 100%;
