@@ -1,6 +1,8 @@
 <?php
 include 'connection.php';
+include 'CartManager.php';
 session_start();
+
 $user_id = $_SESSION['user_id'];
 $user_id2 = $_SESSION['user_name'];
 
@@ -14,6 +16,9 @@ if(isset($_POST['logout'])) {
     header('location:login.php');
 }
 
+
+$cartManager = new CartManager($conn);
+
 if (isset($_POST['add_to_cart'])) {
     $product_id = $_POST['id'];
     $product_image = $_POST['image'];
@@ -22,6 +27,12 @@ if (isset($_POST['add_to_cart'])) {
     $product_quantity = $_POST['cart_quantity'];
 
     $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE `pid`='$product_id' AND `user_id`='$user_id'") or die('query failed');
+
+    $product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE `id`='$product_id'");
+    if ($product_query && mysqli_num_rows($product_query) > 0) {
+        $product = mysqli_fetch_assoc($product_query);
+        $cartManager->addToCart($user_id, $product_id, $product['name'], $product['price'], 1, $product['image']);
+    }
 
     if (mysqli_num_rows($check_cart) > 0) {
         $message[] = 'Product already added to cart';
@@ -33,8 +44,13 @@ if (isset($_POST['add_to_cart'])) {
 
 // Updating quantity
 if (isset($_POST['update_qty_btn'])) {
+    $product_id = $_POST['pid'];
+    $quantity = $_POST['quantity'];
+
     $update_qty_id = $_POST['update_qty_id'];
     $update_value = $_POST['update_qty'];
+
+    $cartManager->updateQuantity($user_id, $product_id, $quantity);
 
     mysqli_query($conn, "UPDATE `cart` SET quantity='$update_value' WHERE id='$update_qty_id'") or die('query failed');
     header('location:cart.php');
@@ -42,8 +58,10 @@ if (isset($_POST['update_qty_btn'])) {
 
 // Deleting product from cart
 if (isset($_GET['delete'])) {
+    $product_id = $_GET['delete'];
     $delete_id = $_GET['delete'];
     mysqli_query($conn, "DELETE FROM `cart` WHERE id='$delete_id'") or die('query failed');
+    $cartManager->deleteItem($user_id, $product_id);
     header('location:cart.php');
 }
 
@@ -80,6 +98,7 @@ if (isset($_GET['move_to_cart'])) {
         $message[] = 'Product not found in wishlist';
     }
 }
+$cart_items = $cartManager->getCartItems($user_id);
 ?>
 
 <!DOCTYPE html>
@@ -214,7 +233,7 @@ if (isset($_GET['move_to_cart'])) {
 <body>
     <?php include 'header.php'; ?>
     <div style="background: linear-gradient(to bottom, #8d7968, #bab8b1); margin-top:-20px; padding:20px;">
-        <h1 style="font-size: 32px; color:#3e3f3e; font-weight:400; text-align:center; margin-top:100px">Products Added in Cart</h1>
+        <h1 style="font-size: 32px; color:#3e3f3e; font-weight:400; text-align:center; margin-top:100px">Your Shopping Cart</h1>
 
 <section class="shop">
     <?php
@@ -228,6 +247,7 @@ if (isset($_GET['move_to_cart'])) {
         }
     }
     ?>
+    
     <section class='message-container'>
         <div class='box-container'>
         <?php
