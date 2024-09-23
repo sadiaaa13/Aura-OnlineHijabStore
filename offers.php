@@ -5,10 +5,6 @@ session_start();
 $user_id = $_SESSION['user_id'];
 $user_id2 = $_SESSION['user_name'];
 
-if(!isset($user_id2)){
-    header('location:login.php');
-}
-
 if(isset($_POST['logout'])) {
     session_destroy();
     header('location:login.php');

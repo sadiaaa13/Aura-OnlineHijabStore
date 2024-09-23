@@ -3,6 +3,13 @@
 include 'connection.php';
 session_start();
 
+
+if (isset($_POST['logout'])) {
+    session_destroy();
+    header('location:index.php');
+}
+
+
 if (isset($_POST['wishlist_submit'])) {
     $product_id = $_POST['id'];
     $product_image = $_POST['image'];

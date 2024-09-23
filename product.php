@@ -2,6 +2,12 @@
 include 'connection.php';
 session_start();
 
+if (isset($_POST['logout'])) {
+    session_destroy();
+    header('location:index.php');
+}
+
+
 $current_date = date('Y-m-d');
 
 if (isset($_POST['wishlist_submit'])) {
@@ -193,7 +199,7 @@ if (!empty($offers)) {
         .product-price {
             font-size: 20px;
             font-weight: 550;
-            color: #8d7968;
+            color: #b3676a;
             margin: 10px 0;
         }
 
@@ -230,7 +236,7 @@ if (!empty($offers)) {
         .similar-product img {
             max-width: 100px;
             height: auto;
-            border: 2px solid #8d7968;
+            border: 2px solid #b3676a;
             border-radius: 10px;
         }
 
@@ -354,7 +360,7 @@ if (!empty($offers)) {
 
 <?php include 'header.php'; ?>
 
-<section class="form-container1" style="background: linear-gradient(to bottom, #8d7968,#bab8b1); padding:20px; margin-top:-20px;">
+<section class="form-container1" style="background: linear-gradient(to bottom, ##8d7968,#bab8b1); padding:20px; margin-top:-20px;">
         <h1 style="color: #3e3f3e; font-size: 32px; margin-top:100px;">Product Details</h1>
         <?php
         if (isset($message)) {

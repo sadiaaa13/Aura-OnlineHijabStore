@@ -43,7 +43,7 @@
                 // If the user is not logged in, show the login button
                 ?>
                 <form method="get" action="login.php">
-                    <button type="submit" class="login-btn">Login</button>
+                    <button type="submit" class="logout-btn">Login</button>
                 </form>
                 <?php
             }
