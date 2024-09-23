@@ -36,31 +36,37 @@ if (isset($_POST['submit-btn'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link rel="stylesheet" href="aura.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <section class="form-container">
-        <?php
-        if (isset($message)) {
-            foreach ($message as $message) {
-                echo '<div class="message"><span>' . $message . '</span><i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i></div>';
+        <div class="image-container">
+            <img src="img/login.jpeg" alt="Login Image">
+        </div>
+        <div class="form-content">
+            <?php
+            if (isset($message)) {
+                foreach ($message as $message) {
+                    echo '<div class="message"><span>' . $message . '</span><i class="bi bi-x-circle" onclick="this.parentElement.remove()"></i></div>';
+                }
             }
-        }
-        ?>
-        <form method="post">
-            <h1>Login Now</h1>
-            <div class="input-field">
-                <label>Email</label><br>
-                <input type="email" name="email" placeholder="Enter your email" required>
-            </div>
-            <div class="input-field">
-                <label>Password</label><br>
-                <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <p><a href="forgot_password.php">Forgot Password?</a></p>
-            <input type="submit" name="submit-btn" value="Login Now" class="btn">
-            <p>Don't have an account? <a href="register.php">Register now</a></p>
-        </form>
+            ?>
+            <form method="post">
+                <h1>Login</h1>
+                <div class="input-field">
+                    <label>Email</label><br>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="input-field">
+                    <label>Password</label><br>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <input type="submit" name="submit-btn" value="Login Now" class="btn">
+                <p><a href="forgot_password.php">Forgot Password?</a></p>
+               
+                <p>Don't have an account? <a href="register.php">Register now</a></p>
+            </form>
+        </div>
     </section>
 </body>
 </html>
