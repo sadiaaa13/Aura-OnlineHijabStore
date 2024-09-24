@@ -3,9 +3,13 @@ include 'connection.php';
 session_start();
 
 $user_id = $_SESSION['user_id'];
-$user_id2 = $_SESSION['user_name'];
+$user_name = $_SESSION['user_name'];
 
-if(isset($_POST['logout'])) {
+if (!isset($user_name)) {
+    header('location:login.php');
+}
+
+if (isset($_POST['logout'])) {
     session_destroy();
     header('location:login.php');
 }

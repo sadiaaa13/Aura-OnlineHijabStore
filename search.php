@@ -1,12 +1,19 @@
 <?php
 include 'connection.php';
 session_start();
+$user_id = $_SESSION['user_id'];
+$user_name = $_SESSION['user_name'];
+
+if (!isset($user_name)) {
+    header('location:login.php');
+    exit();
+}
 
 if (isset($_POST['logout'])) {
     session_destroy();
-    header('location:index.php');
+    header('location:login.php');
+    exit();
 }
-
 
 if (isset($_POST['wishlist_submit'])) {
     $product_id = $_POST['id'];
@@ -314,17 +321,11 @@ while ($offer = mysqli_fetch_assoc($offers_query)) {
 
                 <div class="icon">
                     <a href="product.php?id=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-eye-fill"></a>
-                        <?php if (isset($_SESSION['user_id'])) { ?>
-                            <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                            <a href="shop.php?cart=<?php echo $fetch_products['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
-                        <?php } else { ?>
-                            <a href="login.php" class="bi bi-heart" onclick="return confirm('Please log in to add this product to wishlist.');"></a>
-                            <a href="login.php" class="bi bi-cart" onclick="return confirm('Please log in to add this product to cart.');"></a>
-                        <?php } ?>
-                    </div>
-
+                    <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                    <a href="search.php?cart=<?php echo $product['id']; ?>&search_query=<?php echo urlencode($search_query); ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
+                </div>
             </form>
         </div>
     <?php endforeach; ?>

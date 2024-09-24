@@ -2,13 +2,17 @@
 
 include 'connection.php';
 session_start();
+$user_id = $_SESSION['user_id'];
+$user_name = $_SESSION['user_name'];
 
+if (!isset($user_name)) {
+    header('location:login.php');
+}
 
 if (isset($_POST['logout'])) {
     session_destroy();
-    header('location:index.php');
+    header('location:login.php');
 }
-
 
 if (isset($_POST['wishlist_submit'])) {
     $product_id = $_POST['id'];
