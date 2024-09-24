@@ -44,6 +44,22 @@ ul {
   
 
 }
+.logo {
+    display: flex; 
+    align-items: center;
+    text-decoration: none;
+    color: #bab8b1;
+}
+
+.logo h1 {
+    margin-left: 50px; 
+}
+
+.logo:hover{
+    text-decoration: none;
+    color: #202020;
+}
+
 
 .title span {
     font-size: 1.2rem;

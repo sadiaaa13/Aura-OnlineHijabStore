@@ -10,9 +10,7 @@
 <body>
     <header class="header">
         <div class="flex">
-        <a href="index.php" class="logo">
-            <h1 style="font-family: Garamond, serif">Aura</h1>
-        </a>
+        <a href="index.php" class="logo"><img src="img/userlogo2.png"></a>
             <nav class="navbar">
                 <a href="index.php">home</a>
                 <a href="about.php">about us</a>
