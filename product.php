@@ -8,6 +8,12 @@ if  (isset($_SESSION['user_name'])) {
     $user_name = null;
 }
 
+if  (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+} else {
+    $user_id = null;
+}
+
 
 if (isset($_POST['logout'])) {
     session_destroy();
