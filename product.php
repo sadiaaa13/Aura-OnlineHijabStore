@@ -424,10 +424,15 @@ if (!empty($offers)) {
                     <p class="product-detail"><?php echo $product['product_detail']; ?></p>
 
                     <div class="icon">
-                        <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
-                            <i class="bi bi-heart"></i>
-                        </button>
-                        <a href="product.php?id=<?php echo $product['id']; ?>&cart=<?php echo $product['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
+                        <?php if (isset($_SESSION['user_id'])) { ?>
+                            <button type="submit" name="wishlist_submit" onclick="return confirm('Want to wishlist this product?')">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                            <a href="product.php?cart=<?php echo $fetch_products['id']; ?>" class="bi bi-cart" onclick="return confirm('Want to cart this product?');"></a>
+                        <?php } else { ?>
+                            <a href="login.php" class="bi bi-heart" onclick="return confirm('Please log in to add this product to wishlist.');"></a>
+                            <a href="login.php" class="bi bi-cart" onclick="return confirm('Please log in to add this product to cart.');"></a>
+                        <?php } ?>
                     </div>
                 </form>
             </div>
